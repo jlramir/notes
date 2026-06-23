@@ -1,3 +1,4 @@
+import html
 import re
 
 
@@ -16,7 +17,7 @@ def render_markdown(text: str) -> str:
                 if in_list:
                     out.append("</ul>")
                     in_list = False
-                lang = line[3:].strip()
+                lang = html.escape(line[3:].strip())
                 cls = f' class="language-{lang}"' if lang else ""
                 out.append(f"<pre><code{cls}>")
                 in_code = True

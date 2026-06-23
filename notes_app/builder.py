@@ -1,3 +1,4 @@
+import html
 import json
 import shutil
 from pathlib import Path
@@ -88,16 +89,16 @@ def _write_note_page(note: dict, output_dir: Path, theme: str) -> None:
     else:
         page_dir = output_dir / "note"
     page_dir.mkdir(parents=True, exist_ok=True)
-    depth = 3 if note["folder"] else 2
+    depth = len(note["folder"].split("/")) + 2 if note["folder"] else 2
     theme_path = "../" * depth + f"themes/{theme}.css"
     index_path = "../" * depth + "index.html"
-    tags_html = "".join(f'<span class="tag">{t}</span>' for t in note["tags"])
-    html = f"""<!DOCTYPE html>
+    tags_html = "".join(f'<span class="tag">{html.escape(t)}</span>' for t in note["tags"])
+    page_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{note["title"]}</title>
+  <title>{html.escape(note["title"])}</title>
   <link id="theme-css" rel="stylesheet" href="{theme_path}">
   {_base_styles()}
   {_note_styles()}
@@ -110,10 +111,10 @@ def _write_note_page(note: dict, output_dir: Path, theme: str) -> None:
     </select>
   </header>
   <main class="note-page">
-    <h1 class="note-title">{note["title"]}</h1>
+    <h1 class="note-title">{html.escape(note["title"])}</h1>
     <div class="note-meta">
-      <span class="note-date">{note["date"]}</span>
-      <span class="note-folder">{note["folder"] or "root"}</span>
+      <span class="note-date">{html.escape(note["date"])}</span>
+      <span class="note-folder">{html.escape(note["folder"] or "root")}</span>
     </div>
     <div class="note-tags">{tags_html}</div>
     <div class="note-body">{note["html"]}</div>
@@ -121,18 +122,18 @@ def _write_note_page(note: dict, output_dir: Path, theme: str) -> None:
   {_theme_switcher_js(depth)}
 </body>
 </html>"""
-    (page_dir / f"{note['slug']}.html").write_text(html, encoding="utf-8")
+    (page_dir / f"{note['slug']}.html").write_text(page_html, encoding="utf-8")
 
 
 def _write_index(notes: list[dict], output_dir: Path, theme: str) -> None:
     notes_json = json.dumps([
         {k: v for k, v in n.items() if k not in ("path", "html")}
         for n in notes
-    ])
+    ]).replace("</", "<\\/")
     folders = sorted(set(n["folder"] for n in notes if n["folder"]))
-    folder_items = '<div class="folder-item active" onclick="filterFolder(null)">All Notes</div>'
+    folder_items = '<div class="folder-item active" onclick="filterFolder(event, null)">All Notes</div>'
     for f in folders:
-        folder_items += f'<div class="folder-item" onclick="filterFolder(\'{f}\')">{f}</div>'
+        folder_items += f'<div class="folder-item" onclick="filterFolder(event, \'{f}\')">{f}</div>'
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -168,7 +169,7 @@ def _write_index(notes: list[dict], output_dir: Path, theme: str) -> None:
       render();
     }}
 
-    function filterFolder(folder) {{
+    function filterFolder(event, folder) {{
       activeFolder = folder;
       document.querySelectorAll(".folder-item").forEach(el => el.classList.remove("active"));
       event.target.classList.add("active");
