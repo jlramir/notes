@@ -1,0 +1,17 @@
+/* The Last of Us — post-apocalyptic warm */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap');
+
+:root {
+  --bg-primary:     #1a1410;
+  --bg-secondary:   #211c17;
+  --bg-card:        #1e1912;
+  --text-primary:   #d4c4a0;
+  --text-secondary: #7a6a50;
+  --text-accent:    #c8a040;
+  --border-color:   #3a2e1e;
+  --font-body:      'Merriweather', Georgia, serif;
+  --font-heading:   'Special Elite', 'Courier New', cursive;
+  --highlight-color:#c8a040;
+  --tag-bg:         #2a1e0e;
+  --tag-text:       #c8a040;
+}

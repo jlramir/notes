@@ -1,0 +1,17 @@
+/* Red Dead Redemption 2 — western journal */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:ital,wght@0,400;1,400&display=swap');
+
+:root {
+  --bg-primary:     #2e2416;
+  --bg-secondary:   #3a2e1a;
+  --bg-card:        #342819;
+  --text-primary:   #e8d5a0;
+  --text-secondary: #9a8060;
+  --text-accent:    #d4882a;
+  --border-color:   #5a4020;
+  --font-body:      'Lora', Georgia, serif;
+  --font-heading:   'Playfair Display', Georgia, serif;
+  --highlight-color:#d4882a;
+  --tag-bg:         #4a3010;
+  --tag-text:       #e8d5a0;
+}
