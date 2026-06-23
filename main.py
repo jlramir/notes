@@ -42,7 +42,7 @@ def main() -> None:
         from notes_app.note_ops import new_note, _open_editor
         tags = [t.strip() for t in args.tags.split(",") if t.strip()]
         path = new_note(args.title, args.folder, tags)
-        if sys.stdout.isatty() and sys.environ.get("EDITOR"):
+        if sys.stdout.isatty():
             _open_editor(path)
         print(f"Created: {path}")
 
