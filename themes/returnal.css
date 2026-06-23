@@ -1,0 +1,17 @@
+/* Returnal — sci-fi bioluminescent */
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;600&family=Space+Mono&display=swap');
+
+:root {
+  --bg-primary:     #080c14;
+  --bg-secondary:   #0c1220;
+  --bg-card:        #0a1018;
+  --text-primary:   #c0d8f0;
+  --text-secondary: #406080;
+  --text-accent:    #40e0a0;
+  --border-color:   #102030;
+  --font-body:      'Space Mono', 'Courier New', monospace;
+  --font-heading:   'Exo 2', 'Arial', sans-serif;
+  --highlight-color:#a020f0;
+  --tag-bg:         #081820;
+  --tag-text:       #40e0a0;
+}
