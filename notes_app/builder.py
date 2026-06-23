@@ -135,7 +135,7 @@ def _write_index(notes: list[dict], output_dir: Path, theme: str) -> None:
     for f in folders:
         folder_items += f'<div class="folder-item" onclick="filterFolder(event, \'{f}\')">{f}</div>'
 
-    html = f"""<!DOCTYPE html>
+    index_html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -238,7 +238,7 @@ def _write_index(notes: list[dict], output_dir: Path, theme: str) -> None:
   </script>
 </body>
 </html>"""
-    (output_dir / "index.html").write_text(html, encoding="utf-8")
+    (output_dir / "index.html").write_text(index_html, encoding="utf-8")
 
 
 def _theme_switcher_js(depth: int) -> str:
