@@ -277,7 +277,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 
     /* ── Base ──────────────────────────────────────────────── */
     body {{
-      background: #0b0909;
+      background: linear-gradient(180deg, #220808 0%, #140404 20%, #0c0404 45%, #080404 100%);
       color: #d0c8c0;
       font-family: 'Barlow Condensed', sans-serif;
       height: 100vh;
@@ -428,12 +428,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     /* ── Layout ────────────────────────────────────────────── */
     .cp-layout {{ display: flex; flex: 1; overflow: hidden; }}
 
-    /* ── Sidebar ───────────────────────────────────────────── */
+    /* ── Sidebar — 1/3 width, translucent over body gradient ── */
     .cp-sidebar {{
-      width: 340px;
-      min-width: 280px;
-      background: #0e0b0b;
-      border-right: 1px solid #1e0606;
+      flex: 0 0 33.333%;
+      width: 33.333%;
+      background: rgba(12, 4, 4, 0.72);
+      border-right: 1px solid #2a0808;
       overflow-y: auto;
       flex-shrink: 0;
     }}
@@ -563,12 +563,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       line-height: 1.2;
     }}
 
-    /* ── Content panel ─────────────────────────────────────── */
+    /* ── Content panel — 2/3 width, translucent over gradient ─ */
     .cp-content {{
       flex: 1;
       overflow-y: auto;
       padding: 32px 40px;
-      background: #0b0909;
+      background: rgba(8, 3, 3, 0.55);
     }}
     .cp-content::-webkit-scrollbar {{ width: 4px; }}
     .cp-content::-webkit-scrollbar-track {{ background: #0a0808; }}
