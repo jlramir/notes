@@ -290,7 +290,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     /* ── Top bar ───────────────────────────────────────────── */
     .cp-topbar {{
       background: #0a0808;
-      border-bottom: 1px solid #3a0808;
+      border-bottom: 2px solid #cc2020;
       display: flex;
       align-items: stretch;
       height: 46px;
