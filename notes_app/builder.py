@@ -374,7 +374,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-tab:first-child {{ border-left: 1px solid #1a0505; }}
     .cp-tab.active {{
       color: #00d0c8;
-      text-shadow: 0 0 10px rgba(0,208,200,0.4);
+      text-shadow: 0 0 6px rgba(0,208,200,0.9), 0 0 18px rgba(0,208,200,0.5), 0 0 32px rgba(0,208,200,0.2);
       background: #110a0a;
     }}
     .cp-tab.active::after {{
@@ -541,7 +541,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #00d0c8;
-      text-shadow: 0 0 6px rgba(0,208,200,0.35);
+      text-shadow: 0 0 6px rgba(0,208,200,0.9), 0 0 18px rgba(0,208,200,0.5), 0 0 32px rgba(0,208,200,0.2);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
