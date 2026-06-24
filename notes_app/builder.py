@@ -256,6 +256,9 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
             folder_order.append(n["folder"])
     folder_order_js = json.dumps(folder_order)
 
+    note_count = len(notes)
+    folder_count = len(folder_order)
+
     theme_options = "".join(
         f'<option value="{t}"{" selected" if t == theme else ""}>{_THEME_LABELS[t]}</option>'
         for t in _VALID_THEMES
@@ -271,31 +274,37 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }}
-    .cp-topbar {{ background: var(--bg-secondary); border-bottom: 2px solid var(--text-accent); display: flex; align-items: center; padding: 0 1rem; height: 44px; flex-shrink: 0; gap: 0; }}
-    .cp-tab {{ padding: 0 1.2rem; height: 100%; display: flex; align-items: center; color: var(--text-secondary); font-family: var(--font-heading); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: default; border-right: 1px solid var(--border-color); gap: 0.35rem; }}
+    .cp-topbar {{ background: var(--bg-secondary); border-bottom: 2px solid var(--text-accent); display: flex; align-items: center; padding: 0; height: 48px; flex-shrink: 0; gap: 0; }}
+    .cp-stats {{ display: flex; align-items: center; gap: 1.2rem; padding: 0 1.2rem; height: 100%; border-right: 1px solid var(--border-color); flex-shrink: 0; }}
+    .cp-stat {{ display: flex; flex-direction: column; align-items: center; line-height: 1; gap: 0.1rem; }}
+    .cp-stat-val {{ font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: #c8b400; letter-spacing: 0.06em; }}
+    .cp-stat-label {{ font-family: var(--font-heading); font-size: 0.48rem; letter-spacing: 0.18em; color: var(--text-secondary); text-transform: uppercase; }}
+    .cp-tabs {{ display: flex; align-items: center; height: 100%; }}
+    .cp-tab {{ padding: 0 1.1rem; height: 100%; display: flex; align-items: center; color: var(--text-secondary); font-family: var(--font-heading); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: default; border-right: 1px solid var(--border-color); gap: 0.35rem; }}
     .cp-tab.active {{ color: var(--text-accent); border-bottom: 2px solid var(--text-accent); margin-bottom: -2px; }}
-    .cp-topbar-right {{ margin-left: auto; display: flex; align-items: center; gap: 1rem; }}
+    .cp-topbar-right {{ margin-left: auto; display: flex; align-items: center; gap: 1rem; padding-right: 1rem; }}
     .cp-search {{ background: transparent; border: none; border-bottom: 1px solid var(--border-color); color: var(--text-primary); font-family: var(--font-body); font-size: 0.78rem; padding: 0.2rem 0.5rem; width: 180px; outline: none; }}
     .cp-search:focus {{ border-bottom-color: var(--text-accent); }}
     .cp-search::placeholder {{ color: var(--text-secondary); }}
     .cp-theme-select {{ background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 0.7rem; padding: 0.2rem 0.4rem; cursor: pointer; }}
     .cp-layout {{ display: flex; flex: 1; overflow: hidden; }}
     .cp-sidebar {{ width: 280px; min-width: 220px; background: var(--bg-secondary); border-right: 1px solid var(--border-color); overflow-y: auto; flex-shrink: 0; }}
-    .cp-section-header {{ display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 1rem; background: rgba(0,0,0,0.5); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); cursor: pointer; user-select: none; }}
+    .cp-section-header {{ display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 1rem 0.55rem 0.85rem; background: rgba(0,0,0,0.55); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-left: 3px solid #c8b400; cursor: pointer; user-select: none; }}
     .cp-section-header:first-child {{ border-top: none; }}
-    .cp-section-title {{ font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--text-accent); text-transform: uppercase; font-weight: 700; }}
-    .cp-section-arrow {{ color: var(--text-accent); font-size: 0.65rem; transition: transform 0.15s; display: inline-block; }}
+    .cp-section-title {{ font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.18em; color: #c8b400; text-transform: uppercase; font-weight: 700; }}
+    .cp-section-arrow {{ color: #c8b400; font-size: 0.65rem; transition: transform 0.15s; display: inline-block; }}
     .cp-section-arrow.collapsed {{ transform: rotate(-90deg); }}
-    .cp-note-item {{ display: flex; align-items: flex-start; padding: 0.5rem 1rem 0.5rem 1.2rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 0.6rem; transition: background 0.1s; }}
+    .cp-note-item {{ display: flex; align-items: center; padding: 0.45rem 1rem 0.45rem 1rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 0.7rem; transition: background 0.1s; }}
     .cp-note-item:hover {{ background: rgba(204,32,32,0.12); }}
     .cp-note-item.active {{ background: var(--text-accent); }}
-    .cp-note-item.active .cp-note-title {{ color: #000; }}
-    .cp-note-item.active .cp-note-subtitle {{ color: rgba(0,0,0,0.6); }}
-    .cp-note-item.active .cp-note-icon {{ background: rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.3); color: #000; }}
-    .cp-note-icon {{ width: 34px; height: 34px; background: var(--bg-card, #0c0909); border: 1px solid var(--border-color); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: var(--text-accent); font-family: var(--font-heading); font-weight: 700; }}
+    .cp-note-item.active .cp-note-title {{ color: #0a0000; }}
+    .cp-note-item.active .cp-note-subtitle {{ color: rgba(0,0,0,0.55); }}
+    .cp-note-item.active .cp-note-icon {{ background: rgba(0,0,0,0.25); border-color: rgba(0,0,0,0.35); color: rgba(0,0,0,0.7); }}
+    .cp-note-icon {{ width: 46px; height: 46px; background: linear-gradient(145deg, #1e0606 0%, #2e0a0a 60%, #1a0404 100%); border: 1px solid #4a1010; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.88rem; color: #cc4040; font-family: var(--font-heading); font-weight: 700; letter-spacing: 0.04em; position: relative; overflow: hidden; }}
+    .cp-note-icon::after {{ content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: rgba(204,80,80,0.3); }}
     .cp-note-info {{ flex: 1; min-width: 0; }}
     .cp-note-title {{ font-family: var(--font-heading); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }}
-    .cp-note-subtitle {{ font-size: 0.62rem; color: var(--text-secondary); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .cp-note-subtitle {{ font-size: 0.62rem; color: var(--text-accent); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.18rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
     .cp-content {{ flex: 1; overflow-y: auto; padding: 2rem 2.5rem; background: var(--bg-primary); }}
     .cp-content-empty {{ display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); font-family: var(--font-heading); letter-spacing: 0.25em; text-transform: uppercase; font-size: 0.75rem; }}
     .cp-note-header {{ margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }}
@@ -322,11 +331,17 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 </head>
 <body>
   <header class="cp-topbar">
-    <div class="cp-tab"><span>⊕</span>MAP</div>
-    <div class="cp-tab"><span>◈</span>CHARACTER</div>
-    <div class="cp-tab active"><span>▦</span>JOURNAL</div>
-    <div class="cp-tab"><span>⚙</span>CRAFTING</div>
-    <div class="cp-tab"><span>◇</span>INVENTORY</div>
+    <div class="cp-stats">
+      <div class="cp-stat"><span class="cp-stat-val">{note_count}</span><span class="cp-stat-label">NOTES</span></div>
+      <div class="cp-stat"><span class="cp-stat-val">{folder_count}</span><span class="cp-stat-label">FOLDERS</span></div>
+    </div>
+    <div class="cp-tabs">
+      <div class="cp-tab"><span>⊕</span>MAP</div>
+      <div class="cp-tab"><span>◈</span>CHARACTER</div>
+      <div class="cp-tab active"><span>▦</span>JOURNAL</div>
+      <div class="cp-tab"><span>⚙</span>CRAFTING</div>
+      <div class="cp-tab"><span>◇</span>INVENTORY</div>
+    </div>
     <div class="cp-topbar-right">
       <input class="cp-search" type="text" placeholder="SEARCH..." oninput="onSearch(this.value)" autocomplete="off">
       <select class="cp-theme-select" id="theme-switcher" onchange="switchTheme(this.value)">
@@ -430,7 +445,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
             var titleHtml = q ? highlight(note.title.toUpperCase(), q.toUpperCase()) : note.title.toUpperCase();
             html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
               'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
-              '<div class="cp-note-icon">&#9635;</div>' +
+              '<div class="cp-note-icon">' + note.title.trim().substring(0, 2).toUpperCase() + '</div>' +
               '<div class="cp-note-info">' +
                 '<div class="cp-note-title">' + titleHtml + '</div>' +
                 '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
@@ -444,7 +459,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
           var sub = (note.tags || []).join(' \xb7 ') || note.date || '';
           html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
             'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
-            '<div class="cp-note-icon">&#9635;</div>' +
+            '<div class="cp-note-icon">' + note.title.trim().substring(0, 2).toUpperCase() + '</div>' +
             '<div class="cp-note-info">' +
               '<div class="cp-note-title">' + note.title.toUpperCase() + '</div>' +
               '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
