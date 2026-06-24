@@ -340,12 +340,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 
     /* NOTES = cyan (like "2 LEVEL" in CP2077) */
     .cp-stat-notes .cp-stat-badge {{ background: #001e1e; border-color: #00c8c0; }}
-    .cp-stat-notes .cp-stat-val {{ color: #00d0c8; text-shadow: 0 0 6px rgba(0,208,200,0.9), 0 0 18px rgba(0,208,200,0.5), 0 0 32px rgba(0,208,200,0.2); }}
+    .cp-stat-notes .cp-stat-val {{ color: #00d0c8; text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6); }}
     .cp-stat-notes .cp-stat-label {{ color: #005a56; }}
 
     /* FOLDERS = green (like "2 STREET CRED" in CP2077) */
     .cp-stat-folders .cp-stat-badge {{ background: #0e1800; border-color: #80c020; }}
-    .cp-stat-folders .cp-stat-val {{ color: #88c828; text-shadow: 0 0 6px rgba(120,200,32,0.9), 0 0 18px rgba(120,200,32,0.5), 0 0 32px rgba(120,200,32,0.2); }}
+    .cp-stat-folders .cp-stat-val {{ color: #88c828; text-shadow: 0 0 4px #88c828, 0 0 10px #88c828, 0 0 22px #88c828, 0 0 42px rgba(120,200,32,0.6); }}
     .cp-stat-folders .cp-stat-label {{ color: #3a5008; }}
 
     /* tabs */
@@ -374,7 +374,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-tab:first-child {{ border-left: 1px solid #1a0505; }}
     .cp-tab.active {{
       color: #00d0c8;
-      text-shadow: 0 0 6px rgba(0,208,200,0.9), 0 0 18px rgba(0,208,200,0.5), 0 0 32px rgba(0,208,200,0.2);
+      text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6);
       background: #110a0a;
     }}
     .cp-tab.active::after {{
@@ -402,7 +402,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       border: none;
       border-bottom: 1px solid #4a3c00;
       color: #c8b400;
-      text-shadow: 0 0 6px rgba(200,180,0,0.9), 0 0 18px rgba(200,180,0,0.5), 0 0 32px rgba(200,180,0,0.2);
+      text-shadow: 0 0 4px #c8b400, 0 0 10px #c8b400, 0 0 22px #c8b400, 0 0 42px rgba(200,180,0,0.6);
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 0.78rem;
       letter-spacing: 0.14em;
@@ -417,7 +417,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       background: #0a0808;
       border: 1px solid #4a3c00;
       color: #c8b400;
-      text-shadow: 0 0 6px rgba(200,180,0,0.9), 0 0 18px rgba(200,180,0,0.5), 0 0 32px rgba(200,180,0,0.2);
+      text-shadow: 0 0 4px #c8b400, 0 0 10px #c8b400, 0 0 22px #c8b400, 0 0 42px rgba(200,180,0,0.6);
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 0.7rem;
       letter-spacing: 0.08em;
@@ -543,7 +543,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #00d0c8;
-      text-shadow: 0 0 6px rgba(0,208,200,0.9), 0 0 18px rgba(0,208,200,0.5), 0 0 32px rgba(0,208,200,0.2);
+      text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
