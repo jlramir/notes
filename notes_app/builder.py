@@ -373,8 +373,8 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     }}
     .cp-tab:first-child {{ border-left: 1px solid #1a0505; }}
     .cp-tab.active {{
-      color: #e8ddd8;
-      text-shadow: 0 0 10px rgba(232,221,216,0.25);
+      color: #00d0c8;
+      text-shadow: 0 0 10px rgba(0,208,200,0.4);
       background: #110a0a;
     }}
     .cp-tab.active::after {{
@@ -480,7 +480,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     }}
     .cp-note-item:hover {{ background: #1a0808; }}
     .cp-note-item.active {{ background: #c83020; }}
-    .cp-note-item.active .cp-note-title {{ color: #1a0000; }}
+    .cp-note-item.active .cp-note-title {{ color: #0a0000; text-shadow: none; }}
     .cp-note-item.active .cp-note-subtitle {{ color: rgba(20,0,0,0.65); }}
     .cp-note-item.active .cp-note-icon {{ border-color: rgba(0,0,0,0.3); opacity: 0.85; }}
 
@@ -540,7 +540,8 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #e0d8d0;
+      color: #00d0c8;
+      text-shadow: 0 0 6px rgba(0,208,200,0.35);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
