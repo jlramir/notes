@@ -394,7 +394,6 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       align-items: center;
       gap: 12px;
       padding: 0 16px;
-      border-left: 1px solid #2a0808;
       flex-shrink: 0;
     }}
     .cp-search {{
@@ -432,7 +431,6 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-sidebar {{
       flex: 0 0 33.333%;
       width: 33.333%;
-      background: rgba(12, 4, 4, 0.72);
       border-right: 1px solid #2a0808;
       overflow-y: auto;
       flex-shrink: 0;
@@ -563,12 +561,11 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       line-height: 1.2;
     }}
 
-    /* ── Content panel — 2/3 width, translucent over gradient ─ */
+    /* ── Content panel — 2/3 width ─────────────────────────── */
     .cp-content {{
       flex: 1;
       overflow-y: auto;
       padding: 32px 40px;
-      background: rgba(8, 3, 3, 0.55);
     }}
     .cp-content::-webkit-scrollbar {{ width: 4px; }}
     .cp-content::-webkit-scrollbar-track {{ background: #0a0808; }}
