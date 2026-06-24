@@ -431,7 +431,6 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-sidebar {{
       flex: 0 0 33.333%;
       width: 33.333%;
-      border-right: 1px solid #2a0808;
       overflow-y: auto;
       flex-shrink: 0;
     }}
