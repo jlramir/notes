@@ -377,15 +377,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6);
       background: #110a0a;
     }}
-    .cp-tab.active::after {{
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: #cc2020;
-    }}
+    .cp-tab.active::after {{ content: none; }}
     .cp-tab-icon {{ font-size: 0.7rem; color: inherit; opacity: 0.8; }}
 
     /* right side search + theme */
