@@ -1,17 +1,17 @@
-/* Cyberpunk 2077 — neon noir */
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@600&display=swap');
+/* Cyberpunk 2077 — journal red */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg-primary:     #0a0a0f;
-  --bg-secondary:   #0f0f1a;
-  --bg-card:        #0d0d18;
-  --text-primary:   #e0e0ff;
-  --text-secondary: #6060a0;
-  --text-accent:    #00f0ff;
-  --border-color:   #1a1a35;
+  --bg-primary:     #0a0808;
+  --bg-secondary:   #0f0b0b;
+  --bg-card:        #0c0909;
+  --text-primary:   #ddd0c8;
+  --text-secondary: #5a3a3a;
+  --text-accent:    #cc2020;
+  --border-color:   #2a0808;
   --font-body:      'Share Tech Mono', 'Courier New', monospace;
-  --font-heading:   'Rajdhani', 'Arial Narrow', sans-serif;
-  --highlight-color:#ff00aa;
-  --tag-bg:         #0a1a2a;
-  --tag-text:       #00f0ff;
+  --font-heading:   'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --highlight-color:#e04010;
+  --tag-bg:         #1a0505;
+  --tag-text:       #cc2020;
 }
