@@ -543,7 +543,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: #00d0c8;
-      text-shadow: 0 0 6px rgba(0,208,200,0.35);
+      text-shadow: 0 0 6px rgba(0,208,200,0.8), 0 0 14px rgba(0,208,200,0.35);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
