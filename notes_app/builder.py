@@ -256,6 +256,9 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
             folder_order.append(n["folder"])
     folder_order_js = json.dumps(folder_order)
 
+    note_count = len(notes)
+    folder_count = len(folder_order)
+
     theme_options = "".join(
         f'<option value="{t}"{" selected" if t == theme else ""}>{_THEME_LABELS[t]}</option>'
         for t in _VALID_THEMES
@@ -268,65 +271,409 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notes — JOURNAL</title>
   <link id="theme-css" rel="stylesheet" href="themes/{theme}.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Condensed:wght@400;600;700&family=Share+Tech+Mono&display=swap">
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }}
-    .cp-topbar {{ background: var(--bg-secondary); border-bottom: 2px solid var(--text-accent); display: flex; align-items: center; padding: 0 1rem; height: 44px; flex-shrink: 0; gap: 0; }}
-    .cp-tab {{ padding: 0 1.2rem; height: 100%; display: flex; align-items: center; color: var(--text-secondary); font-family: var(--font-heading); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; cursor: default; border-right: 1px solid var(--border-color); gap: 0.35rem; }}
-    .cp-tab.active {{ color: var(--text-accent); border-bottom: 2px solid var(--text-accent); margin-bottom: -2px; }}
-    .cp-topbar-right {{ margin-left: auto; display: flex; align-items: center; gap: 1rem; }}
-    .cp-search {{ background: transparent; border: none; border-bottom: 1px solid var(--border-color); color: var(--text-primary); font-family: var(--font-body); font-size: 0.78rem; padding: 0.2rem 0.5rem; width: 180px; outline: none; }}
-    .cp-search:focus {{ border-bottom-color: var(--text-accent); }}
-    .cp-search::placeholder {{ color: var(--text-secondary); }}
-    .cp-theme-select {{ background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); font-family: var(--font-body); font-size: 0.7rem; padding: 0.2rem 0.4rem; cursor: pointer; }}
+
+    /* ── Base ──────────────────────────────────────────────── */
+    body {{
+      background: linear-gradient(180deg, #220808 0%, #140404 20%, #0c0404 45%, #080404 100%);
+      color: #d0c8c0;
+      font-family: 'Barlow Condensed', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 16px;
+    }}
+
+    /* ── Top bar ───────────────────────────────────────────── */
+    .cp-topbar {{
+      background: #0a0808;
+      border-bottom: 2px solid #cc2020;
+      display: flex;
+      align-items: stretch;
+      height: 46px;
+      flex-shrink: 0;
+    }}
+
+    /* left stats block — mirrors "2 LEVEL / 2 STREET CRED" */
+    .cp-stats {{
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0;
+      border-right: 1px solid #1a0808;
+      flex-shrink: 0;
+    }}
+    .cp-stat {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 16px;
+      height: 100%;
+      border-right: 1px solid #140404;
+    }}
+    .cp-stat-badge {{
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid;
+    }}
+    .cp-stat-val {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      line-height: 1;
+    }}
+    .cp-stat-label {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      line-height: 1;
+    }}
+    .cp-stat-text {{ display: flex; flex-direction: column; gap: 2px; }}
+
+    /* NOTES = cyan (like "2 LEVEL" in CP2077) */
+    .cp-stat-notes .cp-stat-badge {{ background: #001e1e; border-color: #00c8c0; }}
+    .cp-stat-notes .cp-stat-val {{ color: #00d0c8; text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6); }}
+    .cp-stat-notes .cp-stat-label {{ color: #005a56; }}
+
+    /* FOLDERS = green (like "2 STREET CRED" in CP2077) */
+    .cp-stat-folders .cp-stat-badge {{ background: #0e1800; border-color: #80c020; }}
+    .cp-stat-folders .cp-stat-val {{ color: #88c828; text-shadow: 0 0 4px #88c828, 0 0 10px #88c828, 0 0 22px #88c828, 0 0 42px rgba(120,200,32,0.6); }}
+    .cp-stat-folders .cp-stat-label {{ color: #3a5008; }}
+
+    /* tabs */
+    .cp-tabs {{
+      display: flex;
+      align-items: stretch;
+      flex: 1;
+      justify-content: center;
+    }}
+    .cp-tab {{
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0 18px;
+      color: #b03030;
+      text-shadow: 0 0 7px rgba(180,30,20,0.45);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: default;
+      border-right: 1px solid #1a0505;
+      position: relative;
+    }}
+    .cp-tab:first-child {{ border-left: 1px solid #1a0505; }}
+    .cp-tab.active {{
+      color: #00d0c8;
+      text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6);
+      background: #110a0a;
+    }}
+    .cp-tab.active::after {{ content: none; }}
+    .cp-tab-icon {{ font-size: 0.7rem; color: inherit; opacity: 0.8; }}
+
+    /* right side search + theme */
+    .cp-topbar-right {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }}
+    .cp-search {{
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #4a3c00;
+      color: #c8b400;
+      text-shadow: 0 0 4px #c8b400, 0 0 10px #c8b400, 0 0 22px #c8b400, 0 0 42px rgba(200,180,0,0.6);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      padding: 2px 6px;
+      width: 160px;
+      outline: none;
+      text-transform: uppercase;
+    }}
+    .cp-search:focus {{ border-bottom-color: #c8b400; }}
+    .cp-search::placeholder {{ color: #4a3c00; text-shadow: none; }}
+    .cp-theme-select {{
+      background: #0a0808;
+      border: 1px solid #4a3c00;
+      color: #c8b400;
+      text-shadow: 0 0 4px #c8b400, 0 0 10px #c8b400, 0 0 22px #c8b400, 0 0 42px rgba(200,180,0,0.6);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      padding: 3px 6px;
+      cursor: pointer;
+    }}
+
+    /* ── Layout ────────────────────────────────────────────── */
     .cp-layout {{ display: flex; flex: 1; overflow: hidden; }}
-    .cp-sidebar {{ width: 280px; min-width: 220px; background: var(--bg-secondary); border-right: 1px solid var(--border-color); overflow-y: auto; flex-shrink: 0; }}
-    .cp-section-header {{ display: flex; align-items: center; justify-content: space-between; padding: 0.55rem 1rem; background: rgba(0,0,0,0.5); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); cursor: pointer; user-select: none; }}
-    .cp-section-header:first-child {{ border-top: none; }}
-    .cp-section-title {{ font-family: var(--font-heading); font-size: 0.72rem; letter-spacing: 0.18em; color: var(--text-accent); text-transform: uppercase; font-weight: 700; }}
-    .cp-section-arrow {{ color: var(--text-accent); font-size: 0.65rem; transition: transform 0.15s; display: inline-block; }}
+
+    /* ── Sidebar — 1/3 width, translucent over body gradient ── */
+    .cp-sidebar {{
+      flex: 0 0 33.333%;
+      width: 33.333%;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }}
+    .cp-sidebar::-webkit-scrollbar {{ width: 4px; }}
+    .cp-sidebar::-webkit-scrollbar-track {{ background: #0a0808; }}
+    .cp-sidebar::-webkit-scrollbar-thumb {{ background: #2a0808; }}
+
+    /* section headers — MAIN JOBS / SIDE JOBS style */
+    .cp-section-header {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 8px 14px;
+      background: #080606;
+      border-bottom: 1px solid #1a0505;
+      cursor: pointer;
+      user-select: none;
+    }}
+    .cp-section-title {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      color: #c8b400;
+      text-transform: uppercase;
+    }}
+    .cp-section-arrow {{
+      color: #c8b400;
+      font-size: 0.6rem;
+      transition: transform 0.15s;
+      display: inline-block;
+      opacity: 0.8;
+    }}
     .cp-section-arrow.collapsed {{ transform: rotate(-90deg); }}
-    .cp-note-item {{ display: flex; align-items: flex-start; padding: 0.5rem 1rem 0.5rem 1.2rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03); gap: 0.6rem; transition: background 0.1s; }}
-    .cp-note-item:hover {{ background: rgba(204,32,32,0.12); }}
-    .cp-note-item.active {{ background: var(--text-accent); }}
-    .cp-note-item.active .cp-note-title {{ color: #000; }}
-    .cp-note-item.active .cp-note-subtitle {{ color: rgba(0,0,0,0.6); }}
-    .cp-note-item.active .cp-note-icon {{ background: rgba(0,0,0,0.2); border-color: rgba(0,0,0,0.3); color: #000; }}
-    .cp-note-icon {{ width: 34px; height: 34px; background: var(--bg-card, #0c0909); border: 1px solid var(--border-color); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: var(--text-accent); font-family: var(--font-heading); font-weight: 700; }}
+
+    /* note list items */
+    .cp-note-item {{
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #120404;
+      gap: 10px;
+      min-height: 70px;
+      transition: background 0.08s;
+    }}
+    .cp-note-item:hover {{ background: #1a0808; }}
+    .cp-note-item.active {{ background: #c83020; }}
+    .cp-note-item.active .cp-note-title {{ color: #0a0000; text-shadow: none; }}
+    .cp-note-item.active .cp-note-subtitle {{ color: rgba(20,0,0,0.65); }}
+    .cp-note-item.active .cp-note-icon {{ border-color: rgba(0,0,0,0.3); opacity: 0.85; }}
+
+    /* thumbnail — scan-line textured dark-red frame */
+    .cp-note-icon {{
+      width: 52px;
+      height: 52px;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #3a0a0a;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          rgba(0,0,0,0) 0px,
+          rgba(0,0,0,0) 1px,
+          rgba(0,0,0,0.35) 1px,
+          rgba(0,0,0,0.35) 2px
+        ),
+        linear-gradient(150deg, #2a0808 0%, #1c0404 45%, #280606 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }}
+    /* top-edge highlight */
+    .cp-note-icon::before {{
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: rgba(200,80,40,0.45);
+    }}
+    /* corner accent */
+    .cp-note-icon::after {{
+      content: '';
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 6px; height: 6px;
+      border-top: 1px solid rgba(200,160,0,0.5);
+      border-right: 1px solid rgba(200,160,0,0.5);
+    }}
+    .cp-note-icon-text {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #cc4040;
+      letter-spacing: 0.04em;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 0 10px rgba(220,40,20,0.7);
+    }}
+
     .cp-note-info {{ flex: 1; min-width: 0; }}
-    .cp-note-title {{ font-family: var(--font-heading); font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }}
-    .cp-note-subtitle {{ font-size: 0.62rem; color: var(--text-secondary); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-    .cp-content {{ flex: 1; overflow-y: auto; padding: 2rem 2.5rem; background: var(--bg-primary); }}
-    .cp-content-empty {{ display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary); font-family: var(--font-heading); letter-spacing: 0.25em; text-transform: uppercase; font-size: 0.75rem; }}
-    .cp-note-header {{ margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }}
-    .cp-note-heading {{ font-family: var(--font-heading); font-size: 1.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-primary); margin-bottom: 0.5rem; font-weight: 700; }}
-    .cp-note-meta {{ display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }}
-    .cp-note-date {{ font-size: 0.68rem; color: var(--text-secondary); letter-spacing: 0.1em; }}
-    .cp-tag {{ font-size: 0.62rem; color: var(--text-accent); border: 1px solid var(--text-accent); padding: 0.1rem 0.4rem; letter-spacing: 0.1em; text-transform: uppercase; }}
-    .cp-note-body {{ line-height: 1.75; }}
-    .cp-note-body h1, .cp-note-body h2, .cp-note-body h3 {{ font-family: var(--font-heading); color: var(--text-accent); letter-spacing: 0.08em; text-transform: uppercase; margin: 1.5rem 0 0.5rem; font-weight: 700; }}
-    .cp-note-body h1 {{ font-size: 1.3rem; }}
-    .cp-note-body h2 {{ font-size: 1.05rem; }}
-    .cp-note-body h3 {{ font-size: 0.88rem; }}
-    .cp-note-body p {{ margin-bottom: 0.85rem; }}
-    .cp-note-body ul {{ padding-left: 1.5rem; margin-bottom: 0.85rem; }}
-    .cp-note-body li {{ margin-bottom: 0.3rem; }}
-    .cp-note-body strong {{ color: var(--text-primary); }}
-    .cp-note-body em {{ color: var(--text-secondary); font-style: italic; }}
-    .cp-note-body code {{ font-family: var(--font-body); color: var(--text-accent); font-size: 0.9em; }}
-    .cp-note-body pre {{ background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 3px solid var(--text-accent); padding: 1rem; overflow-x: auto; margin-bottom: 0.85rem; }}
-    .cp-note-body pre code {{ color: var(--text-primary); }}
-    .cp-note-body a {{ color: var(--text-accent); }}
-    mark {{ background: var(--highlight-color); color: #000; padding: 0 2px; }}
+    .cp-note-title {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #00d0c8;
+      text-shadow: 0 0 6px rgba(0,208,200,0.8), 0 0 14px rgba(0,208,200,0.35);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }}
+    .cp-note-subtitle {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #c04030;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+    }}
+
+    /* ── Content panel — 2/3 width ─────────────────────────── */
+    .cp-content {{
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 40px;
+    }}
+    .cp-content::-webkit-scrollbar {{ width: 4px; }}
+    .cp-content::-webkit-scrollbar-track {{ background: #0a0808; }}
+    .cp-content::-webkit-scrollbar-thumb {{ background: #2a0808; }}
+
+    .cp-content-empty {{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #220e0e;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+    }}
+
+    /* note title */
+    .cp-note-header {{ margin-bottom: 24px; }}
+    .cp-note-heading {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #e8e0d8;
+      margin-bottom: 10px;
+      line-height: 1.1;
+    }}
+    .cp-note-meta {{ display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }}
+    .cp-note-date {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      color: #4a3030;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }}
+    .cp-tag {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: #cc2020;
+      border: 1px solid #5a0808;
+      padding: 2px 7px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: #100404;
+    }}
+
+    /* note body — regular Barlow (not condensed) for readability */
+    .cp-note-body {{
+      font-family: 'Barlow', 'Barlow Condensed', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      line-height: 1.8;
+      color: #c0b0a8;
+    }}
+    .cp-note-body h1, .cp-note-body h2, .cp-note-body h3 {{
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 28px 0 10px;
+      color: #e8ddd8;
+      line-height: 1.2;
+    }}
+    .cp-note-body h1 {{ font-size: 1.2rem; }}
+    .cp-note-body h2 {{ font-size: 1rem; color: #d0c8c0; }}
+    .cp-note-body h3 {{ font-size: 0.88rem; color: #b0a8a0; }}
+    .cp-note-body p {{ margin-bottom: 14px; }}
+    .cp-note-body ul, .cp-note-body ol {{ padding-left: 1.5rem; margin-bottom: 14px; }}
+    .cp-note-body li {{ margin-bottom: 5px; }}
+    .cp-note-body strong {{ color: #e0d8d0; font-weight: 700; }}
+    .cp-note-body em {{ color: #9a8880; font-style: italic; }}
+    .cp-note-body a {{ color: #cc2020; text-decoration: none; }}
+    .cp-note-body a:hover {{ text-decoration: underline; }}
+    .cp-note-body code {{
+      font-family: 'Share Tech Mono', monospace;
+      color: #cc4040;
+      font-size: 0.85em;
+      background: #130404;
+      padding: 1px 5px;
+      border: 1px solid #2a0606;
+    }}
+    .cp-note-body pre {{
+      background: #0a0606;
+      border: 1px solid #220606;
+      border-left: 2px solid #cc2020;
+      padding: 16px 18px;
+      overflow-x: auto;
+      margin-bottom: 14px;
+    }}
+    .cp-note-body pre code {{ background: none; border: none; padding: 0; color: #b8a8a0; font-size: 0.88em; }}
+
+    /* search highlight */
+    mark {{ background: #cc2020; color: #fff; padding: 0 2px; }}
   </style>
 </head>
 <body>
   <header class="cp-topbar">
-    <div class="cp-tab"><span>⊕</span>MAP</div>
-    <div class="cp-tab"><span>◈</span>CHARACTER</div>
-    <div class="cp-tab active"><span>▦</span>JOURNAL</div>
-    <div class="cp-tab"><span>⚙</span>CRAFTING</div>
-    <div class="cp-tab"><span>◇</span>INVENTORY</div>
+    <div class="cp-stats">
+      <div class="cp-stat cp-stat-notes">
+        <div class="cp-stat-badge"><span class="cp-stat-val">{note_count}</span></div>
+        <div class="cp-stat-text"><span class="cp-stat-label">NOTES</span></div>
+      </div>
+      <div class="cp-stat cp-stat-folders">
+        <div class="cp-stat-badge"><span class="cp-stat-val">{folder_count}</span></div>
+        <div class="cp-stat-text"><span class="cp-stat-label">FOLDERS</span></div>
+      </div>
+    </div>
+    <div class="cp-tabs">
+      <div class="cp-tab"><span>⊕</span>MAP</div>
+      <div class="cp-tab"><span>◈</span>CHARACTER</div>
+      <div class="cp-tab active"><span>▦</span>JOURNAL</div>
+      <div class="cp-tab"><span>⚙</span>CRAFTING</div>
+      <div class="cp-tab"><span>◇</span>INVENTORY</div>
+    </div>
     <div class="cp-topbar-right">
       <input class="cp-search" type="text" placeholder="SEARCH..." oninput="onSearch(this.value)" autocomplete="off">
       <select class="cp-theme-select" id="theme-switcher" onchange="switchTheme(this.value)">
@@ -430,7 +777,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
             var titleHtml = q ? highlight(note.title.toUpperCase(), q.toUpperCase()) : note.title.toUpperCase();
             html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
               'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
-              '<div class="cp-note-icon">&#9635;</div>' +
+              '<div class="cp-note-icon"><span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span></div>' +
               '<div class="cp-note-info">' +
                 '<div class="cp-note-title">' + titleHtml + '</div>' +
                 '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
@@ -444,7 +791,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
           var sub = (note.tags || []).join(' \xb7 ') || note.date || '';
           html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
             'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
-            '<div class="cp-note-icon">&#9635;</div>' +
+            '<div class="cp-note-icon"><span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span></div>' +
             '<div class="cp-note-info">' +
               '<div class="cp-note-title">' + note.title.toUpperCase() + '</div>' +
               '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
