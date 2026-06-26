@@ -473,7 +473,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-note-item.active {{ background: #c83020; }}
     .cp-note-item.active .cp-note-title {{ color: #0a0000; text-shadow: none; }}
     .cp-note-item.active .cp-note-subtitle {{ color: rgba(20,0,0,0.65); }}
-    .cp-note-item.active .cp-note-icon {{ border-color: rgba(0,0,0,0.3); opacity: 0.85; }}
+    .cp-note-item.active .cp-note-icon {{ border-color: rgba(0,0,0,0.3); opacity: 0.75; }}
 
     /* thumbnail — scan-line textured dark-red frame */
     .cp-note-icon {{
@@ -482,7 +482,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       flex-shrink: 0;
       position: relative;
       overflow: hidden;
-      border: 1px solid #3a0a0a;
+      border: 1px solid #6a1010;
       background:
         repeating-linear-gradient(
           0deg,
@@ -502,7 +502,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 1px;
-      background: rgba(200,80,40,0.45);
+      background: rgba(200,80,40,0.6);
     }}
     /* corner accent */
     .cp-note-icon::after {{
@@ -510,18 +510,18 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       position: absolute;
       top: 3px; right: 3px;
       width: 6px; height: 6px;
-      border-top: 1px solid rgba(200,160,0,0.5);
-      border-right: 1px solid rgba(200,160,0,0.5);
+      border-top: 1px solid rgba(200,160,0,0.7);
+      border-right: 1px solid rgba(200,160,0,0.7);
     }}
     .cp-note-icon-text {{
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      color: #cc4040;
+      color: #c8b400;
       letter-spacing: 0.04em;
       position: relative;
       z-index: 1;
-      text-shadow: 0 0 10px rgba(220,40,20,0.7);
+      text-shadow: 0 0 6px #c8b400, 0 0 14px rgba(200,180,0,0.5);
     }}
 
     .cp-note-info {{ flex: 1; min-width: 0; }}
@@ -557,6 +557,13 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       flex: 1;
       overflow-y: auto;
       padding: 32px 40px;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.25) 2px,
+        rgba(0,0,0,0.25) 3px
+      );
     }}
     .cp-content::-webkit-scrollbar {{ width: 4px; }}
     .cp-content::-webkit-scrollbar-track {{ background: #0a0808; }}
@@ -575,14 +582,29 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     }}
 
     /* note title */
-    .cp-note-header {{ margin-bottom: 24px; }}
+    .cp-note-header {{
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #2a0808;
+      position: relative;
+    }}
+    .cp-note-header::after {{
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 60px;
+      height: 1px;
+      background: #cc2020;
+    }}
     .cp-note-heading {{
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 1.6rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #e8e0d8;
+      color: #00d0c8;
+      text-shadow: 0 0 6px rgba(0,208,200,0.8), 0 0 14px rgba(0,208,200,0.35);
       margin-bottom: 10px;
       line-height: 1.1;
     }}
@@ -590,7 +612,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-note-date {{
       font-family: 'Barlow Condensed', sans-serif;
       font-size: 0.68rem;
-      color: #4a3030;
+      color: #6a4040;
       letter-spacing: 0.14em;
       text-transform: uppercase;
     }}
@@ -620,16 +642,15 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin: 28px 0 10px;
-      color: #e8ddd8;
       line-height: 1.2;
     }}
-    .cp-note-body h1 {{ font-size: 1.2rem; }}
-    .cp-note-body h2 {{ font-size: 1rem; color: #d0c8c0; }}
-    .cp-note-body h3 {{ font-size: 0.88rem; color: #b0a8a0; }}
+    .cp-note-body h1 {{ font-size: 1.2rem; color: #00d0c8; text-shadow: 0 0 6px rgba(0,208,200,0.6), 0 0 14px rgba(0,208,200,0.25); }}
+    .cp-note-body h2 {{ font-size: 1rem; color: #c8b400; text-shadow: 0 0 6px rgba(200,180,0,0.6), 0 0 12px rgba(200,180,0,0.25); }}
+    .cp-note-body h3 {{ font-size: 0.88rem; color: #cc2020; }}
     .cp-note-body p {{ margin-bottom: 14px; }}
     .cp-note-body ul, .cp-note-body ol {{ padding-left: 1.5rem; margin-bottom: 14px; }}
     .cp-note-body li {{ margin-bottom: 5px; }}
-    .cp-note-body strong {{ color: #e0d8d0; font-weight: 700; }}
+    .cp-note-body strong {{ color: #f0ece8; font-weight: 700; }}
     .cp-note-body em {{ color: #9a8880; font-style: italic; }}
     .cp-note-body a {{ color: #cc2020; text-decoration: none; }}
     .cp-note-body a:hover {{ text-decoration: underline; }}
