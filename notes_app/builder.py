@@ -289,12 +289,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 
     /* ── Top bar ───────────────────────────────────────────── */
     .cp-topbar {{
-      background: #0a0808;
       border-bottom: 2px solid #cc2020;
       display: flex;
       align-items: stretch;
-      height: 46px;
+      height: 86px;
       flex-shrink: 0;
+      margin: 0 56px;
     }}
 
     /* left stats block — mirrors "2 LEVEL / 2 STREET CRED" */
@@ -312,26 +312,22 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       gap: 8px;
       padding: 0 16px;
       height: 100%;
-      border-right: 1px solid #140404;
     }}
     .cp-stat-badge {{
-      width: 22px;
-      height: 22px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      border: 1px solid;
     }}
     .cp-stat-val {{
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.9rem;
+      font-size: 2.2rem;
       font-weight: 700;
       line-height: 1;
     }}
     .cp-stat-label {{
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.58rem;
+      font-size: 1rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       line-height: 1;
@@ -339,14 +335,14 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-stat-text {{ display: flex; flex-direction: column; gap: 2px; }}
 
     /* NOTES = cyan (like "2 LEVEL" in CP2077) */
-    .cp-stat-notes .cp-stat-badge {{ background: #001e1e; border-color: #00c8c0; }}
-    .cp-stat-notes .cp-stat-val {{ color: #00d0c8; text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6); }}
-    .cp-stat-notes .cp-stat-label {{ color: #005a56; }}
+    .cp-stat-notes .cp-stat-badge {{}}
+    .cp-stat-notes .cp-stat-val {{ color: #00d0c8; text-shadow: 0 0 8px rgba(0,208,200,0.5), 0 0 20px rgba(0,208,200,0.2); }}
+    .cp-stat-notes .cp-stat-label {{ color: #00a89e; }}
 
     /* FOLDERS = green (like "2 STREET CRED" in CP2077) */
-    .cp-stat-folders .cp-stat-badge {{ background: #0e1800; border-color: #80c020; }}
-    .cp-stat-folders .cp-stat-val {{ color: #88c828; text-shadow: 0 0 4px #88c828, 0 0 10px #88c828, 0 0 22px #88c828, 0 0 42px rgba(120,200,32,0.6); }}
-    .cp-stat-folders .cp-stat-label {{ color: #3a5008; }}
+    .cp-stat-folders .cp-stat-badge {{}}
+    .cp-stat-folders .cp-stat-val {{ color: #88c828; text-shadow: 0 0 8px rgba(136,200,40,0.5), 0 0 20px rgba(136,200,40,0.2); }}
+    .cp-stat-folders .cp-stat-label {{ color: #6a9a18; }}
 
     /* tabs */
     .cp-tabs {{
@@ -363,7 +359,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       color: #b03030;
       text-shadow: 0 0 7px rgba(180,30,20,0.45);
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.78rem;
+      font-size: 1rem;
       font-weight: 600;
       letter-spacing: 0.18em;
       text-transform: uppercase;
@@ -374,8 +370,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-tab:first-child {{ border-left: 1px solid #1a0505; }}
     .cp-tab.active {{
       color: #00d0c8;
-      text-shadow: 0 0 4px #00d0c8, 0 0 10px #00d0c8, 0 0 22px #00d0c8, 0 0 42px rgba(0,208,200,0.6);
-      background: #110a0a;
+      text-shadow: 0 0 8px rgba(0,208,200,0.5), 0 0 20px rgba(0,208,200,0.2);
     }}
     .cp-tab.active::after {{ content: none; }}
     .cp-tab-icon {{ font-size: 0.7rem; color: inherit; opacity: 0.8; }}
@@ -392,10 +387,10 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       background: transparent;
       border: none;
       border-bottom: 1px solid #4a3c00;
-      color: #c8b400;
-      text-shadow: 0 0 4px #c8b400, 0 0 10px #c8b400, 0 0 22px #c8b400, 0 0 42px rgba(200,180,0,0.6);
+      color: #face4b;
+      text-shadow: 0 0 8px rgba(250,206,75,0.4), 0 0 20px rgba(250,206,75,0.15);
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.78rem;
+      font-size: 1rem;
       letter-spacing: 0.14em;
       padding: 2px 6px;
       width: 160px;
@@ -407,10 +402,10 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-theme-select {{
       background: #0a0808;
       border: 1px solid #4a3c00;
-      color: #c8b400;
-      text-shadow: 0 0 4px #c8b400, 0 0 10px #c8b400, 0 0 22px #c8b400, 0 0 42px rgba(200,180,0,0.6);
+      color: #face4b;
+      text-shadow: 0 0 8px rgba(250,206,75,0.4), 0 0 20px rgba(250,206,75,0.15);
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.7rem;
+      font-size: 1rem;
       letter-spacing: 0.08em;
       padding: 3px 6px;
       cursor: pointer;
@@ -425,6 +420,14 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       width: 33.333%;
       overflow-y: auto;
       flex-shrink: 0;
+      padding: 96px 96px 0;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.25) 2px,
+        rgba(0,0,0,0.25) 3px
+      );
     }}
     .cp-sidebar::-webkit-scrollbar {{ width: 4px; }}
     .cp-sidebar::-webkit-scrollbar-track {{ background: #0a0808; }}
@@ -436,17 +439,21 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       align-items: center;
       justify-content: space-between;
       padding: 8px 12px 8px 14px;
-      background: #080606;
-      border-bottom: 1px solid #1a0505;
+      background: #0e0606;
+      border: 1px solid #2a0808;
+      border-left: 2px solid #3a0808;
+      margin: 6px 6px 2px 6px;
+      min-height: 54px;
       cursor: pointer;
       user-select: none;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
     }}
     .cp-section-title {{
       font-family: 'Barlow Condensed', sans-serif;
-      font-size: 0.78rem;
+      font-size: 1.1rem;
       font-weight: 700;
       letter-spacing: 0.22em;
-      color: #c8b400;
+      color: #eb5c57;
       text-transform: uppercase;
     }}
     .cp-section-arrow {{
@@ -462,17 +469,22 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-note-item {{
       display: flex;
       align-items: center;
-      padding: 8px 12px;
+      padding: 8px 10px;
       cursor: pointer;
-      border-bottom: 1px solid #120404;
       gap: 10px;
       min-height: 70px;
       transition: background 0.08s;
+      margin: 3px 6px 3px auto;
+      width: calc(75% - 12px);
+      background: #0c0404;
+      border: 1px solid #2a0808;
+      border-left: 2px solid #3a0808;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
     }}
-    .cp-note-item:hover {{ background: #1a0808; }}
-    .cp-note-item.active {{ background: #c83020; }}
-    .cp-note-item.active .cp-note-title {{ color: #0a0000; text-shadow: none; }}
-    .cp-note-item.active .cp-note-subtitle {{ color: rgba(20,0,0,0.65); }}
+    .cp-note-item:hover {{ background: #1a0808; border-left-color: #882020; }}
+    .cp-note-item.active {{ background: #9a1a0c; border: 2px solid #cc2020; border-left: 2px solid #ff3020; }}
+    .cp-note-item.active .cp-note-title {{ color: #00d0c8; text-shadow: 0 0 6px rgba(0,208,200,0.8), 0 0 14px rgba(0,208,200,0.35); }}
+    .cp-note-item.active .cp-note-subtitle {{ color: #c8b400; }}
     .cp-note-item.active .cp-note-icon {{ border-color: rgba(0,0,0,0.3); opacity: 0.75; }}
 
     /* thumbnail — scan-line textured dark-red frame */
@@ -483,6 +495,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       position: relative;
       overflow: hidden;
       border: 1px solid #6a1010;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%);
       background:
         repeating-linear-gradient(
           0deg,
@@ -512,6 +525,25 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       width: 6px; height: 6px;
       border-top: 1px solid rgba(200,160,0,0.7);
       border-right: 1px solid rgba(200,160,0,0.7);
+    }}
+    .cp-note-icon-label {{
+      position: absolute;
+      top: 4px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.42rem;
+      font-weight: 700;
+      color: #cc3030;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      z-index: 1;
+      line-height: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      padding: 0 2px;
     }}
     .cp-note-icon-text {{
       font-family: 'Barlow Condensed', sans-serif;
@@ -556,7 +588,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-content {{
       flex: 1;
       overflow-y: auto;
-      padding: 32px 40px;
+      padding: 168px 168px 32px;
       background: repeating-linear-gradient(
         0deg,
         rgba(0,0,0,0) 0px,
@@ -603,8 +635,8 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #00d0c8;
-      text-shadow: 0 0 6px rgba(0,208,200,0.8), 0 0 14px rgba(0,208,200,0.35);
+      color: #f56e6c;
+      text-shadow: 0 0 6px rgb(239, 3, 0), 0 0 14px rgba(255, 0, 0, 0.68);
       margin-bottom: 10px;
       line-height: 1.1;
     }}
@@ -634,7 +666,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       font-size: 0.95rem;
       font-weight: 400;
       line-height: 1.8;
-      color: #c0b0a8;
+      color: #eb5c57;
     }}
     .cp-note-body h1, .cp-note-body h2, .cp-note-body h3 {{
       font-family: 'Barlow Condensed', sans-serif;
@@ -650,7 +682,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-note-body p {{ margin-bottom: 14px; }}
     .cp-note-body ul, .cp-note-body ol {{ padding-left: 1.5rem; margin-bottom: 14px; }}
     .cp-note-body li {{ margin-bottom: 5px; }}
-    .cp-note-body strong {{ color: #f0ece8; font-weight: 700; }}
+    .cp-note-body strong {{ color: #f79593; font-weight: 700; }}
     .cp-note-body em {{ color: #9a8880; font-style: italic; }}
     .cp-note-body a {{ color: #cc2020; text-decoration: none; }}
     .cp-note-body a:hover {{ text-decoration: underline; }}
@@ -665,12 +697,33 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     .cp-note-body pre {{
       background: #0a0606;
       border: 1px solid #220606;
-      border-left: 2px solid #cc2020;
+      border-left: 2px solid #00d0c8;
       padding: 16px 18px;
+      padding-right: 72px;
       overflow-x: auto;
       margin-bottom: 14px;
+      position: relative;
     }}
     .cp-note-body pre code {{ background: none; border: none; padding: 0; color: #b8a8a0; font-size: 0.88em; }}
+    .cp-copy-btn {{
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: transparent;
+      border: 1px solid #00d0c8;
+      color: #00d0c8;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 3px 10px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.1s;
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
+    }}
+    .cp-copy-btn:hover {{ background: rgba(0,208,200,0.15); }}
+    .cp-copy-btn.copied {{ color: #88c828; border-color: #88c828; }}
 
     /* search highlight */
     mark {{ background: #cc2020; color: #fff; padding: 0 2px; }}
@@ -689,11 +742,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       </div>
     </div>
     <div class="cp-tabs">
-      <div class="cp-tab"><span>⊕</span>MAP</div>
-      <div class="cp-tab"><span>◈</span>CHARACTER</div>
       <div class="cp-tab active"><span>▦</span>JOURNAL</div>
-      <div class="cp-tab"><span>⚙</span>CRAFTING</div>
-      <div class="cp-tab"><span>◇</span>INVENTORY</div>
     </div>
     <div class="cp-topbar-right">
       <input class="cp-search" type="text" placeholder="SEARCH..." oninput="onSearch(this.value)" autocomplete="off">
@@ -731,6 +780,21 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
           '</div>' +
         '</div>' +
         '<div class="cp-note-body">' + (note.html || '') + '</div>';
+      document.querySelectorAll('#cp-content .cp-note-body pre').forEach(function(pre) {{
+        var btn = document.createElement('button');
+        btn.className = 'cp-copy-btn';
+        btn.textContent = 'COPY';
+        btn.addEventListener('click', function() {{
+          var code = pre.querySelector('code');
+          var text = code ? code.innerText : pre.innerText.replace('COPY', '').trim();
+          navigator.clipboard.writeText(text).then(function() {{
+            btn.textContent = 'COPIED';
+            btn.classList.add('copied');
+            setTimeout(function() {{ btn.textContent = 'COPY'; btn.classList.remove('copied'); }}, 2000);
+          }});
+        }});
+        pre.appendChild(btn);
+      }});
     }}
 
     function toggleSection(folder) {{
@@ -798,7 +862,10 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
             var titleHtml = q ? highlight(note.title.toUpperCase(), q.toUpperCase()) : note.title.toUpperCase();
             html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
               'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
-              '<div class="cp-note-icon"><span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span></div>' +
+              '<div class="cp-note-icon">' +
+                '<span class="cp-note-icon-label">' + (note.folder || 'ROOT').toUpperCase() + '</span>' +
+                '<span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span>' +
+              '</div>' +
               '<div class="cp-note-info">' +
                 '<div class="cp-note-title">' + titleHtml + '</div>' +
                 '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
@@ -812,7 +879,10 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
           var sub = (note.tags || []).join(' \xb7 ') || note.date || '';
           html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
             'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
-            '<div class="cp-note-icon"><span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span></div>' +
+            '<div class="cp-note-icon">' +
+              '<span class="cp-note-icon-label">ROOT</span>' +
+              '<span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span>' +
+            '</div>' +
             '<div class="cp-note-info">' +
               '<div class="cp-note-title">' + note.title.toUpperCase() + '</div>' +
               '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
