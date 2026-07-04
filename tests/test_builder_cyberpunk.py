@@ -124,3 +124,16 @@ def test_cyberpunk_has_top_gradient_strip(tmp_path, monkeypatch):
     assert ".cp-topbar::before" in html
     # magenta stop present in the strip gradient
     assert "#e0006a" in html
+
+
+def test_cyberpunk_scrollbar_glows_red(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index.html").read_text()
+    # find the scrollbar-thumb block and confirm it glows
+    idx = html.find("::-webkit-scrollbar-thumb")
+    assert idx != -1
+    thumb_region = html[idx:idx + 200]
+    assert "box-shadow" in thumb_region
+    assert "#cc2020" in thumb_region

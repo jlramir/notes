@@ -443,10 +443,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         rgba(0,0,0,0.25) 2px,
         rgba(0,0,0,0.25) 3px
       );
+      scrollbar-width: thin;
+      scrollbar-color: #cc2020 #0a0808;
     }}
-    .cp-sidebar::-webkit-scrollbar {{ width: 4px; }}
+    .cp-sidebar::-webkit-scrollbar {{ width: 6px; }}
     .cp-sidebar::-webkit-scrollbar-track {{ background: #0a0808; }}
-    .cp-sidebar::-webkit-scrollbar-thumb {{ background: #2a0808; }}
+    .cp-sidebar::-webkit-scrollbar-thumb {{ background: #cc2020; box-shadow: 0 0 8px rgba(204,32,32,0.8), 0 0 16px rgba(255,48,32,0.4); }}
 
     /* section headers — MAIN JOBS / SIDE JOBS style */
     .cp-section-header {{
@@ -611,10 +613,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         rgba(0,0,0,0.25) 2px,
         rgba(0,0,0,0.25) 3px
       );
+      scrollbar-width: thin;
+      scrollbar-color: #cc2020 #0a0808;
     }}
-    .cp-content::-webkit-scrollbar {{ width: 4px; }}
+    .cp-content::-webkit-scrollbar {{ width: 6px; }}
     .cp-content::-webkit-scrollbar-track {{ background: #0a0808; }}
-    .cp-content::-webkit-scrollbar-thumb {{ background: #2a0808; }}
+    .cp-content::-webkit-scrollbar-thumb {{ background: #cc2020; box-shadow: 0 0 8px rgba(204,32,32,0.8), 0 0 16px rgba(255,48,32,0.4); }}
 
     .cp-content-empty {{
       display: flex;
