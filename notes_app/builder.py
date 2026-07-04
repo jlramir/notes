@@ -299,6 +299,18 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       flex-shrink: 0;
       margin: 0 56px;
     }}
+    .cp-topbar {{ position: relative; }}
+    .cp-topbar::before {{
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #e0006a 0%, #cc2020 45%, rgba(204,32,32,0) 100%);
+      box-shadow: 0 0 10px rgba(224,0,106,0.5);
+      pointer-events: none;
+    }}
 
     /* left stats block — mirrors "2 LEVEL / 2 STREET CRED" */
     .cp-stats {{
