@@ -102,3 +102,15 @@ def test_notes_json_excludes_html_field(tmp_path, monkeypatch):
     data = json.loads((output_dir / "notes.json").read_text())
     assert len(data) == 1
     assert "html" not in data[0]
+
+
+def test_cyberpunk_body_has_vignette_and_noise(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    _make_note(notes_dir, "Bg Note", "work", [])
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index.html").read_text()
+    # vignette: a radial gradient darkening the corners
+    assert "radial-gradient(" in html
+    # texture: inline SVG noise layer (no binary asset)
+    assert "data:image/svg+xml" in html

@@ -277,7 +277,10 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 
     /* ── Base ──────────────────────────────────────────────── */
     body {{
-      background: linear-gradient(180deg, #220808 0%, #140404 20%, #0c0404 45%, #080404 100%);
+      background:
+        radial-gradient(ellipse 120% 90% at 50% 0%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #220808 0%, #140404 20%, #0c0404 45%, #080404 100%);
       color: #d0c8c0;
       font-family: 'Barlow Condensed', sans-serif;
       height: 100vh;
