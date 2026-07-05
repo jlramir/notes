@@ -19,7 +19,13 @@ def _make_theme(themes_dir: Path, name: str) -> None:
     (themes_dir / f"{name}.css").write_text(f":root {{ --bg-primary: #000; }}")
 
 
-def test_build_creates_index(tmp_path):
+def test_build_creates_redirect_stub(tmp_path):
+    """Test that build() creates index.html as a JS redirect stub.
+
+    The actual per-theme index pages (index-{theme}.html) are created by separate
+    tests: test_build_creates_all_theme_index_files, test_build_index_html_is_redirect_to_default_theme,
+    and test_index_pages_have_navigation_switchtheme.
+    """
     notes_dir = tmp_path / "notes"
     themes_dir = tmp_path / "themes"
     output_dir = tmp_path / "output"
