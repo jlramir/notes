@@ -104,3 +104,10 @@ def test_rdr2_index_switchtheme_navigates(tmp_path, monkeypatch):
     html = (output_dir / "index-rdr2.html").read_text()
     assert "window.location.href" in html
     assert "savedTheme !== 'rdr2'" in html
+
+
+def test_rdr2_css_has_dark_background(tmp_path):
+    """themes/rdr2.css must define --bg-primary as dark #0a0a08."""
+    css = (Path(__file__).parent.parent / "themes" / "rdr2.css").read_text()
+    assert "--bg-primary:" in css
+    assert "#0a0a08" in css
