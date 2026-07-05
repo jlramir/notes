@@ -12,3 +12,6 @@ wheels/
 # Project files
 output/
 .notes-config.json
+
+# Local development scaffolding (superpowers specs/plans)
+docs/superpowers/

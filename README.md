@@ -61,9 +61,24 @@ The generated page has live client-side search, folder navigation, and an in-pag
 
 ## Themes
 
-Game-inspired visual themes, selectable via `theme <name>` or the in-page switcher:
+Game-inspired visual themes, selectable via `theme <name>` or the in-page switcher (your choice is remembered in `localStorage`):
 
 `cyberpunk` · `last-of-us` · `rdr2` · `returnal` · `dead-space` · `doom`
+
+All themes share live client-side search and folder filtering. The generated site is fully self-contained — every theme is pure CSS with no binary assets or external dependencies.
+
+### Cyberpunk 2077 journal (default)
+
+The `cyberpunk` theme renders a two-panel **journal** modeled on the in-game shard reader, rather than the standard card grid:
+
+- **Journal top bar** — live `NOTES` / `FOLDERS` counts and a `JOURNAL` tab with a glowing cyan underline, plus search and the theme switcher.
+- **Sidebar** — notes grouped into collapsible folder sections with HUD-style thumbnails; click a note to open it in the reading pane.
+- **Reading pane** — the selected note rendered inline with neon headings and a code block **COPY** button.
+- **In-game atmosphere** — a layered maroon background with a corner vignette and subtle noise texture, a magenta→red gradient bleed along the top edge, angular (clipped-corner) panels, scanline overlays, neon red/cyan/amber glow accents, and a glowing red scrollbar.
+
+### Other themes
+
+`last-of-us`, `rdr2`, `returnal`, `dead-space`, and `doom` use a searchable **card-grid** index with a folder sidebar and one page per note, each restyled through its own palette and fonts.
 
 ## Configuration
 
