@@ -35,3 +35,71 @@ def test_rdr2_css_has_parchment_accent(tmp_path):
     css = Path("themes/rdr2.css").read_text()
     assert "--text-accent:" in css
     assert "#d4882a" in css
+
+
+def test_rdr2_index_has_two_panel_layout(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    _make_note(notes_dir, "Test Note", "work", [])
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index-rdr2.html").read_text()
+    assert "rdr-sidebar" in html
+    assert "rdr-content" in html
+    assert "rdr-topbar" in html
+
+
+def test_rdr2_index_shows_journal_title(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index-rdr2.html").read_text()
+    assert "JOURNAL" in html
+
+
+def test_rdr2_index_embeds_html_field(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    _make_note(notes_dir, "Rich Note", "work", [], content="## Section\n\nHello")
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index-rdr2.html").read_text()
+    assert '"html"' in html
+    assert "<h2>" in html
+
+
+def test_rdr2_index_groups_by_folder(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    _make_note(notes_dir, "Work Note", "work", [])
+    _make_note(notes_dir, "Ideas Note", "ideas", [])
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index-rdr2.html").read_text()
+    assert '"work"' in html
+    assert '"ideas"' in html
+
+
+def test_rdr2_index_escapes_script_injection(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    _make_note(
+        notes_dir, "Bad Note", "work", [],
+        content="</script><script>alert(1)</script>",
+    )
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index-rdr2.html").read_text()
+    assert "</script><script>alert(1)" not in html
+
+
+def test_rdr2_index_has_parchment_content_background(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index-rdr2.html").read_text()
+    assert "#f2e8d0" in html
+
+
+def test_rdr2_index_switchtheme_navigates(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index-rdr2.html").read_text()
+    assert "window.location.href" in html

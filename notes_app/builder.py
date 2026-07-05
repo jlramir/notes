@@ -40,8 +40,9 @@ def build(
     for note in notes:
         _write_note_page(note, output_dir, active_theme)
     _write_index_cyberpunk(notes, output_dir, "cyberpunk")
+    _write_index_rdr2(notes, output_dir, "rdr2")
     for t in _VALID_THEMES:
-        if t != "cyberpunk":
+        if t not in ("cyberpunk", "rdr2"):
             _write_index(notes, output_dir, t)
     _write_index_redirect(output_dir, active_theme)
 
@@ -968,6 +969,584 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 </body>
 </html>"""
     (output_dir / "index-cyberpunk.html").write_text(index_html, encoding="utf-8")
+
+
+def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
+    notes_json = json.dumps([
+        {k: v for k, v in n.items() if k != "path"}
+        for n in notes
+    ]).replace("</", "<\\/")
+
+    folder_order: list[str] = []
+    for n in notes:
+        if n["folder"] and n["folder"] not in folder_order:
+            folder_order.append(n["folder"])
+    folder_order_js = json.dumps(folder_order)
+
+    note_count = len(notes)
+    folder_count = len(folder_order)
+
+    theme_options = "".join(
+        f'<option value="{t}"{" selected" if t == theme else ""}>{_THEME_LABELS[t]}</option>'
+        for t in _VALID_THEMES
+    )
+
+    index_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes — Journal</title>
+  <link id="theme-css" rel="stylesheet" href="themes/{theme}.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap">
+  <style>
+    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+    /* ── Base ────────────────────────────────────────── */
+    body {{
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #1e1408 0%, #16100a 60%, #120e08 100%);
+      color: #e8d5a0;
+      font-family: 'Lora', Georgia, serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 16px;
+    }}
+
+    /* ── Topbar ──────────────────────────────────────── */
+    .rdr-topbar {{
+      background: linear-gradient(180deg, #2a1e0e 0%, #1e1408 100%);
+      border-bottom: 2px solid #6a4820;
+      display: flex;
+      align-items: stretch;
+      height: 80px;
+      flex-shrink: 0;
+      position: relative;
+    }}
+    .rdr-topbar::before {{
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #8a6030 20%, #d4882a 50%, #8a6030 80%, transparent 100%);
+    }}
+
+    .rdr-stats {{
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 28px;
+      border-right: 1px solid #3a2810;
+      flex-shrink: 0;
+    }}
+    .rdr-stat {{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }}
+    .rdr-stat-val {{
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #d4882a;
+      line-height: 1;
+    }}
+    .rdr-stat-label {{
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      color: #7a6040;
+      text-transform: uppercase;
+      font-family: 'Lora', serif;
+    }}
+
+    .rdr-title-area {{
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+    }}
+    .rdr-title-ornament {{ color: #8a6030; font-size: 0.85rem; }}
+    .rdr-title-text {{
+      font-family: 'Playfair Display', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: #d4882a;
+    }}
+
+    .rdr-topbar-right {{
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 24px;
+      border-left: 1px solid #3a2810;
+      flex-shrink: 0;
+    }}
+    .rdr-search {{
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #5a4020;
+      color: #e8d5a0;
+      font-family: 'Lora', serif;
+      font-size: 0.85rem;
+      font-style: italic;
+      padding: 2px 6px;
+      width: 160px;
+      outline: none;
+    }}
+    .rdr-search::placeholder {{ color: #5a4020; font-style: italic; }}
+    .rdr-search:focus {{ border-bottom-color: #9a6830; }}
+    .rdr-theme-select {{
+      background: #1a1208;
+      border: 1px solid #5a4020;
+      color: #d4882a;
+      font-family: 'Lora', serif;
+      font-size: 0.82rem;
+      padding: 3px 6px;
+      cursor: pointer;
+    }}
+
+    /* ── Layout ──────────────────────────────────────── */
+    .rdr-layout {{ display: flex; flex: 1; overflow: hidden; }}
+
+    /* ── Sidebar — dark leather ──────────────────────── */
+    .rdr-sidebar {{
+      flex: 0 0 33.333%;
+      width: 33.333%;
+      overflow-y: auto;
+      padding: 40px 24px 32px;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #1e1408 0%, #180e06 100%);
+      border-right: 2px solid #4a3010;
+      scrollbar-width: thin;
+      scrollbar-color: #6a4820 #1a1208;
+    }}
+    .rdr-sidebar::-webkit-scrollbar {{ width: 4px; }}
+    .rdr-sidebar::-webkit-scrollbar-track {{ background: #1a1208; }}
+    .rdr-sidebar::-webkit-scrollbar-thumb {{ background: #6a4820; }}
+
+    /* section headers — chapter dividers */
+    .rdr-section-header {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0 8px;
+      border-bottom: 1px solid #3a2410;
+      margin: 20px 0 4px;
+      cursor: pointer;
+      user-select: none;
+    }}
+    .rdr-section-header:first-child {{ margin-top: 0; }}
+    .rdr-section-divider {{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }}
+    .rdr-section-title {{
+      font-family: 'Playfair Display', serif;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: #d4882a;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }}
+    .rdr-section-line {{
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #4a3010, transparent);
+    }}
+    .rdr-section-arrow {{
+      color: #6a4820;
+      font-size: 0.55rem;
+      transition: transform 0.15s;
+      margin-left: 8px;
+      flex-shrink: 0;
+    }}
+    .rdr-section-arrow.collapsed {{ transform: rotate(-90deg); }}
+
+    /* note items — ledger rows with dot leaders */
+    .rdr-note-item {{
+      display: flex;
+      align-items: baseline;
+      padding: 7px 0 7px 6px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(74,48,16,0.4);
+      gap: 4px;
+    }}
+    .rdr-note-item:hover {{ background: rgba(212,136,42,0.07); }}
+    .rdr-note-item.active {{
+      background: rgba(212,136,42,0.12);
+      border-left: 2px solid #d4882a;
+      padding-left: 4px;
+    }}
+    .rdr-note-info {{ flex-shrink: 1; min-width: 0; overflow: hidden; }}
+    .rdr-note-title {{
+      font-family: 'Lora', serif;
+      font-size: 0.88rem;
+      color: #e8d5a0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }}
+    .rdr-note-item.active .rdr-note-title {{ color: #f0c060; font-style: italic; }}
+    .rdr-note-dots {{
+      flex: 1;
+      border-bottom: 1px dotted #3a2810;
+      margin: 0 4px 3px;
+      min-width: 10px;
+      align-self: flex-end;
+    }}
+    .rdr-note-subtitle {{
+      font-family: 'Lora', serif;
+      font-size: 0.68rem;
+      color: #7a5830;
+      font-style: italic;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }}
+
+    /* ── Content panel — parchment pages ────────────── */
+    .rdr-content {{
+      flex: 1;
+      overflow-y: auto;
+      padding: 64px 96px 48px;
+      background:
+        repeating-linear-gradient(
+          0deg,
+          transparent 0px,
+          transparent 27px,
+          rgba(140,100,50,0.12) 27px,
+          rgba(140,100,50,0.12) 28px
+        ),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #f2e8d0 0%, #ecdfc4 60%, #e8d8bc 100%);
+      color: #2a1804;
+      scrollbar-width: thin;
+      scrollbar-color: #8a6030 #e8d8bc;
+    }}
+    .rdr-content::-webkit-scrollbar {{ width: 6px; }}
+    .rdr-content::-webkit-scrollbar-track {{ background: #e8d8bc; }}
+    .rdr-content::-webkit-scrollbar-thumb {{ background: #8a6030; }}
+
+    .rdr-content-empty {{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #c0a87a;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-style: italic;
+    }}
+
+    /* note header */
+    .rdr-note-header {{
+      margin-bottom: 28px;
+    }}
+    .rdr-note-heading {{
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #1a0e06;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }}
+    .rdr-note-divider {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 12px 0;
+      color: #a08040;
+      font-size: 0.75rem;
+    }}
+    .rdr-note-divider::before, .rdr-note-divider::after {{
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #a08040 50%, transparent);
+    }}
+    .rdr-note-meta {{
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }}
+    .rdr-note-date {{
+      font-family: 'Lora', serif;
+      font-size: 0.72rem;
+      color: #8a6840;
+      font-style: italic;
+    }}
+    .rdr-tag {{
+      font-family: 'Lora', serif;
+      font-size: 0.65rem;
+      color: #6a4820;
+      border: 1px solid #a08040;
+      padding: 1px 8px;
+      font-style: italic;
+    }}
+
+    /* note body */
+    .rdr-note-body {{
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.95rem;
+      line-height: 1.85;
+      color: #2a1804;
+    }}
+    .rdr-note-body h1, .rdr-note-body h2, .rdr-note-body h3 {{
+      font-family: 'Playfair Display', serif;
+      color: #1a0e06;
+      margin: 28px 0 10px;
+    }}
+    .rdr-note-body h1 {{ font-size: 1.4rem; border-bottom: 1px solid #c0a060; padding-bottom: 6px; }}
+    .rdr-note-body h2 {{ font-size: 1.15rem; color: #4a2e10; }}
+    .rdr-note-body h3 {{ font-size: 0.95rem; color: #6a4020; font-style: italic; }}
+    .rdr-note-body p {{ margin-bottom: 14px; }}
+    .rdr-note-body ul, .rdr-note-body ol {{ padding-left: 1.5rem; margin-bottom: 14px; }}
+    .rdr-note-body li {{ margin-bottom: 5px; }}
+    .rdr-note-body strong {{ color: #1a0e06; font-weight: 700; }}
+    .rdr-note-body em {{ color: #5a3a1a; font-style: italic; }}
+    .rdr-note-body a {{ color: #8a4a10; text-decoration: underline; }}
+    .rdr-note-body code {{
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      color: #4a2e10;
+      font-size: 0.85em;
+      background: rgba(90,56,24,0.1);
+      padding: 1px 5px;
+      border: 1px solid #c0a060;
+    }}
+    .rdr-note-body pre {{
+      background: rgba(140,100,50,0.08);
+      border: 1px solid #c0a060;
+      border-left: 3px solid #8a6030;
+      padding: 16px 18px;
+      padding-right: 72px;
+      overflow-x: auto;
+      margin-bottom: 14px;
+      position: relative;
+    }}
+    .rdr-note-body pre code {{ background: none; border: none; padding: 0; color: #3a2010; font-size: 0.88em; }}
+    .rdr-copy-btn {{
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: transparent;
+      border: 1px solid #8a6030;
+      color: #8a6030;
+      font-family: 'Lora', serif;
+      font-size: 0.65rem;
+      font-style: italic;
+      letter-spacing: 0.06em;
+      padding: 2px 10px;
+      cursor: pointer;
+      transition: background 0.1s;
+    }}
+    .rdr-copy-btn:hover {{ background: rgba(138,96,48,0.1); }}
+    .rdr-copy-btn.copied {{ color: #6a8040; border-color: #6a8040; }}
+
+    mark {{ background: rgba(212,136,42,0.35); color: #1a0e06; padding: 0 2px; }}
+  </style>
+</head>
+<body>
+  <header class="rdr-topbar">
+    <div class="rdr-stats">
+      <div class="rdr-stat">
+        <span class="rdr-stat-val">{note_count}</span>
+        <span class="rdr-stat-label">Entries</span>
+      </div>
+      <div class="rdr-stat">
+        <span class="rdr-stat-val">{folder_count}</span>
+        <span class="rdr-stat-label">Chapters</span>
+      </div>
+    </div>
+    <div class="rdr-title-area">
+      <span class="rdr-title-ornament">✦</span>
+      <span class="rdr-title-text">JOURNAL</span>
+      <span class="rdr-title-ornament">✦</span>
+    </div>
+    <div class="rdr-topbar-right">
+      <input class="rdr-search" type="text" placeholder="Search entries..." oninput="onSearch(this.value)" autocomplete="off">
+      <select class="rdr-theme-select" id="theme-switcher" onchange="switchTheme(this.value)">
+        {theme_options}
+      </select>
+    </div>
+  </header>
+  <div class="rdr-layout">
+    <nav class="rdr-sidebar" id="rdr-sidebar"></nav>
+    <main class="rdr-content" id="rdr-content">
+      <div class="rdr-content-empty">Select an entry to read</div>
+    </main>
+  </div>
+  <script>
+    const NOTES = {notes_json};
+    let activeId = null;
+    let searchQuery = '';
+    const collapsed = {{}};
+    const folderOrder = {folder_order_js};
+
+    function selectNote(id) {{
+      activeId = id;
+      document.querySelectorAll('.rdr-note-item').forEach(function(el) {{ el.classList.remove('active'); }});
+      var item = document.querySelector('[data-id="' + id + '"]');
+      if (item) item.classList.add('active');
+      var note = NOTES.find(function(n) {{ return n.slug === id; }});
+      if (!note) return;
+      var tags = (note.tags || []).map(function(t) {{ return '<span class="rdr-tag">' + t + '</span>'; }}).join('');
+      document.getElementById('rdr-content').innerHTML =
+        '<div class="rdr-note-header">' +
+          '<div class="rdr-note-heading">' + note.title + '</div>' +
+          '<div class="rdr-note-divider">✦</div>' +
+          '<div class="rdr-note-meta">' +
+            '<span class="rdr-note-date">' + note.date + '</span>' + tags +
+          '</div>' +
+        '</div>' +
+        '<div class="rdr-note-body">' + (note.html || '') + '</div>';
+      document.querySelectorAll('#rdr-content .rdr-note-body pre').forEach(function(pre) {{
+        var btn = document.createElement('button');
+        btn.className = 'rdr-copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', function() {{
+          var code = pre.querySelector('code');
+          var text = code ? code.innerText : pre.innerText.replace('Copy', '').trim();
+          navigator.clipboard.writeText(text).then(function() {{
+            btn.textContent = 'Copied';
+            btn.classList.add('copied');
+            setTimeout(function() {{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }}, 2000);
+          }});
+        }});
+        pre.appendChild(btn);
+      }});
+    }}
+
+    function toggleSection(folder) {{
+      collapsed[folder] = !collapsed[folder];
+      renderSidebar();
+    }}
+
+    function highlight(text, q) {{
+      if (!q) return text;
+      var esc = q.replace(/[.*+?^${{}}()|[\\]\\\\]/g, '\\\\$&');
+      return text.replace(new RegExp('(' + esc + ')', 'gi'), '<mark>$1</mark>');
+    }}
+
+    function score(note, q) {{
+      if (!q) return 1;
+      var s = 0;
+      if (note.title.toLowerCase().indexOf(q) !== -1) s += 10;
+      if ((note.tags || []).some(function(t) {{ return t.toLowerCase().indexOf(q) !== -1; }})) s += 8;
+      if ((note.folder || '').toLowerCase().indexOf(q) !== -1) s += 5;
+      if ((note.content || '').toLowerCase().indexOf(q) !== -1) s += 1;
+      return s;
+    }}
+
+    function onSearch(q) {{
+      searchQuery = q.toLowerCase().trim();
+      renderSidebar();
+    }}
+
+    function renderSidebar() {{
+      var q = searchQuery;
+      var notes = NOTES;
+      if (q) {{
+        notes = notes
+          .map(function(n) {{ return {{ n: n, s: score(n, q) }}; }})
+          .filter(function(x) {{ return x.s > 0; }})
+          .sort(function(a, b) {{ return b.s - a.s; }})
+          .map(function(x) {{ return x.n; }});
+      }}
+
+      var byFolder = {{}};
+      var rootNotes = [];
+      notes.forEach(function(note) {{
+        if (note.folder) {{
+          if (!byFolder[note.folder]) byFolder[note.folder] = [];
+          byFolder[note.folder].push(note);
+        }} else {{
+          rootNotes.push(note);
+        }}
+      }});
+
+      var folders = q ? Object.keys(byFolder) : folderOrder;
+      var html = '';
+
+      folders.forEach(function(folder) {{
+        var folderNotes = byFolder[folder] || [];
+        if (!folderNotes.length) return;
+        var isCollapsed = !q && collapsed[folder];
+        html += '<div class="rdr-section-header" onclick="toggleSection(\\'' + folder + '\\')">' +
+          '<div class="rdr-section-divider">' +
+            '<span class="rdr-section-title">' + folder.toUpperCase() + '</span>' +
+            '<div class="rdr-section-line"></div>' +
+          '</div>' +
+          '<span class="rdr-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">▼</span>' +
+          '</div>';
+        if (!isCollapsed) {{
+          folderNotes.forEach(function(note) {{
+            var sub = note.date || (note.tags || []).join(', ') || '';
+            var titleHtml = q ? highlight(note.title, q) : note.title;
+            html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
+              'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
+              '<div class="rdr-note-info"><div class="rdr-note-title">' + titleHtml + '</div></div>' +
+              '<div class="rdr-note-dots"></div>' +
+              '<div class="rdr-note-subtitle">' + sub + '</div>' +
+              '</div>';
+          }});
+        }}
+      }});
+
+      if (rootNotes.length) {{
+        rootNotes.forEach(function(note) {{
+          var sub = note.date || (note.tags || []).join(', ') || '';
+          html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
+            'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
+            '<div class="rdr-note-info"><div class="rdr-note-title">' + note.title + '</div></div>' +
+            '<div class="rdr-note-dots"></div>' +
+            '<div class="rdr-note-subtitle">' + sub + '</div>' +
+            '</div>';
+        }});
+      }}
+
+      if (!html) {{
+        html = '<div style="padding:2rem;color:#5a3818;text-align:center;font-size:0.8rem;font-style:italic;font-family:Lora,serif">No entries found.</div>';
+      }}
+
+      document.getElementById('rdr-sidebar').innerHTML = html;
+      if (activeId) {{
+        var active = document.querySelector('[data-id="' + activeId + '"]');
+        if (active) active.classList.add('active');
+      }}
+    }}
+
+    function switchTheme(name, save) {{
+      if (save === undefined) save = true;
+      if (save) localStorage.setItem('notes-theme', name);
+      if (name !== 'rdr2') {{
+        window.location.href = 'index-' + name + '.html';
+      }}
+    }}
+
+    var savedTheme = localStorage.getItem('notes-theme');
+    if (savedTheme && savedTheme !== 'rdr2') {{
+      window.location.href = 'index-' + savedTheme + '.html';
+    }}
+    renderSidebar();
+    if (NOTES.length > 0) selectNote(NOTES[0].slug);
+  </script>
+</body>
+</html>"""
+    (output_dir / "index-rdr2.html").write_text(index_html, encoding="utf-8")
 
 
 def _theme_switcher_js(depth: int) -> str:
