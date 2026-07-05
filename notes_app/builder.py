@@ -813,6 +813,14 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     const collapsed = {{}};
     const folderOrder = {folder_order_js};
 
+    function htmlEscape(str) {{
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }}
+
     function selectNote(id) {{
       activeId = id;
       document.querySelectorAll('.cp-note-item').forEach(function(el) {{ el.classList.remove('active'); }});
@@ -820,12 +828,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       if (item) item.classList.add('active');
       var note = NOTES.find(function(n) {{ return n.slug === id; }});
       if (!note) return;
-      var tags = (note.tags || []).map(function(t) {{ return '<span class="cp-tag">' + t + '</span>'; }}).join('');
+      var tags = (note.tags || []).map(function(t) {{ return '<span class="cp-tag">' + htmlEscape(t) + '</span>'; }}).join('');
       document.getElementById('cp-content').innerHTML =
         '<div class="cp-note-header">' +
-          '<div class="cp-note-heading">' + note.title + '</div>' +
+          '<div class="cp-note-heading">' + htmlEscape(note.title) + '</div>' +
           '<div class="cp-note-meta">' +
-            '<span class="cp-note-date">' + note.date + '</span>' + tags +
+            '<span class="cp-note-date">' + htmlEscape(note.date) + '</span>' + tags +
           '</div>' +
         '</div>' +
         '<div class="cp-note-body">' + (note.html || '') + '</div>';
@@ -902,22 +910,22 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         if (!folderNotes.length) return;
         var isCollapsed = !q && collapsed[folder];
         html += '<div class="cp-section-header" onclick="toggleSection(\\'' + folder + '\\')">' +
-          '<span class="cp-section-title">' + folder.toUpperCase() + '</span>' +
+          '<span class="cp-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
           '<span class="cp-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">&#9660;</span>' +
           '</div>';
         if (!isCollapsed) {{
           folderNotes.forEach(function(note) {{
             var sub = (note.tags || []).join(' \xb7 ') || note.date || '';
-            var titleHtml = q ? highlight(note.title.toUpperCase(), q.toUpperCase()) : note.title.toUpperCase();
+            var titleHtml = q ? highlight(htmlEscape(note.title.toUpperCase()), q.toUpperCase()) : htmlEscape(note.title.toUpperCase());
             html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-              'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
+              'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
               '<div class="cp-note-icon">' +
-                '<span class="cp-note-icon-label">' + (note.folder || 'ROOT').toUpperCase() + '</span>' +
-                '<span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span>' +
+                '<span class="cp-note-icon-label">' + htmlEscape((note.folder || 'ROOT').toUpperCase()) + '</span>' +
+                '<span class="cp-note-icon-text">' + htmlEscape(note.title.trim().substring(0, 2).toUpperCase()) + '</span>' +
               '</div>' +
               '<div class="cp-note-info">' +
                 '<div class="cp-note-title">' + titleHtml + '</div>' +
-                '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
+                '<div class="cp-note-subtitle">' + htmlEscape(sub.toUpperCase()) + '</div>' +
               '</div></div>';
           }});
         }}
@@ -927,14 +935,14 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         rootNotes.forEach(function(note) {{
           var sub = (note.tags || []).join(' \xb7 ') || note.date || '';
           html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-            'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
+            'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
             '<div class="cp-note-icon">' +
               '<span class="cp-note-icon-label">ROOT</span>' +
-              '<span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span>' +
+              '<span class="cp-note-icon-text">' + htmlEscape(note.title.trim().substring(0, 2).toUpperCase()) + '</span>' +
             '</div>' +
             '<div class="cp-note-info">' +
-              '<div class="cp-note-title">' + note.title.toUpperCase() + '</div>' +
-              '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
+              '<div class="cp-note-title">' + (q ? highlight(htmlEscape(note.title.toUpperCase()), q.toUpperCase()) : htmlEscape(note.title.toUpperCase())) + '</div>' +
+              '<div class="cp-note-subtitle">' + htmlEscape(sub.toUpperCase()) + '</div>' +
             '</div></div>';
         }});
       }}
@@ -1396,6 +1404,14 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
     const collapsed = {{}};
     const folderOrder = {folder_order_js};
 
+    function htmlEscape(str) {{
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }}
+
     function selectNote(id) {{
       activeId = id;
       document.querySelectorAll('.rdr-note-item').forEach(function(el) {{ el.classList.remove('active'); }});
@@ -1403,13 +1419,13 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
       if (item) item.classList.add('active');
       var note = NOTES.find(function(n) {{ return n.slug === id; }});
       if (!note) return;
-      var tags = (note.tags || []).map(function(t) {{ return '<span class="rdr-tag">' + t + '</span>'; }}).join('');
+      var tags = (note.tags || []).map(function(t) {{ return '<span class="rdr-tag">' + htmlEscape(t) + '</span>'; }}).join('');
       document.getElementById('rdr-content').innerHTML =
         '<div class="rdr-note-header">' +
-          '<div class="rdr-note-heading">' + note.title + '</div>' +
+          '<div class="rdr-note-heading">' + htmlEscape(note.title) + '</div>' +
           '<div class="rdr-note-divider">✦</div>' +
           '<div class="rdr-note-meta">' +
-            '<span class="rdr-note-date">' + note.date + '</span>' + tags +
+            '<span class="rdr-note-date">' + htmlEscape(note.date) + '</span>' + tags +
           '</div>' +
         '</div>' +
         '<div class="rdr-note-body">' + (note.html || '') + '</div>';
@@ -1487,7 +1503,7 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
         var isCollapsed = !q && collapsed[folder];
         html += '<div class="rdr-section-header" onclick="toggleSection(\\'' + folder + '\\')">' +
           '<div class="rdr-section-divider">' +
-            '<span class="rdr-section-title">' + folder.toUpperCase() + '</span>' +
+            '<span class="rdr-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
             '<div class="rdr-section-line"></div>' +
           '</div>' +
           '<span class="rdr-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">▼</span>' +
@@ -1495,12 +1511,12 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
         if (!isCollapsed) {{
           folderNotes.forEach(function(note) {{
             var sub = note.date || (note.tags || []).join(', ') || '';
-            var titleHtml = q ? highlight(note.title, q) : note.title;
+            var titleHtml = q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title);
             html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-              'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
+              'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
               '<div class="rdr-note-info"><div class="rdr-note-title">' + titleHtml + '</div></div>' +
               '<div class="rdr-note-dots"></div>' +
-              '<div class="rdr-note-subtitle">' + sub + '</div>' +
+              '<div class="rdr-note-subtitle">' + htmlEscape(sub) + '</div>' +
               '</div>';
           }});
         }}
@@ -1510,10 +1526,10 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
         rootNotes.forEach(function(note) {{
           var sub = note.date || (note.tags || []).join(', ') || '';
           html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-            'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
-            '<div class="rdr-note-info"><div class="rdr-note-title">' + note.title + '</div></div>' +
+            'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
+            '<div class="rdr-note-info"><div class="rdr-note-title">' + (q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title)) + '</div></div>' +
             '<div class="rdr-note-dots"></div>' +
-            '<div class="rdr-note-subtitle">' + sub + '</div>' +
+            '<div class="rdr-note-subtitle">' + htmlEscape(sub) + '</div>' +
             '</div>';
         }});
       }}

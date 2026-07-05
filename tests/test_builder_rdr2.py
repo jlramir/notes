@@ -32,7 +32,7 @@ def _make_note(notes_dir, title, folder, tags, content="Hello world"):
 
 def test_rdr2_css_has_parchment_accent(tmp_path):
     """themes/rdr2.css must define --text-accent as amber #d4882a."""
-    css = Path("themes/rdr2.css").read_text()
+    css = (Path(__file__).parent.parent / "themes" / "rdr2.css").read_text()
     assert "--text-accent:" in css
     assert "#d4882a" in css
 
@@ -103,3 +103,4 @@ def test_rdr2_index_switchtheme_navigates(tmp_path, monkeypatch):
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
     html = (output_dir / "index-rdr2.html").read_text()
     assert "window.location.href" in html
+    assert "savedTheme !== 'rdr2'" in html
