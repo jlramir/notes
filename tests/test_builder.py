@@ -19,7 +19,13 @@ def _make_theme(themes_dir: Path, name: str) -> None:
     (themes_dir / f"{name}.css").write_text(f":root {{ --bg-primary: #000; }}")
 
 
-def test_build_creates_index(tmp_path):
+def test_build_creates_redirect_stub(tmp_path):
+    """Test that build() creates index.html as a JS redirect stub.
+
+    The actual per-theme index pages (index-{theme}.html) are created by separate
+    tests: test_build_creates_all_theme_index_files, test_build_index_html_is_redirect_to_default_theme,
+    and test_index_pages_have_navigation_switchtheme.
+    """
     notes_dir = tmp_path / "notes"
     themes_dir = tmp_path / "themes"
     output_dir = tmp_path / "output"
@@ -87,7 +93,52 @@ def test_build_index_embeds_notes_data(tmp_path):
     _make_note(notes_dir, "Embedded", "work", ["searchable"])
     _make_theme(themes_dir, "cyberpunk")
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     assert "const NOTES" in html
     assert "Embedded" in html
     assert "searchable" in html
+
+
+def test_build_creates_all_theme_index_files(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir = tmp_path / "notes"
+    themes_dir = tmp_path / "themes"
+    output_dir = tmp_path / "output"
+    themes_dir.mkdir(parents=True)
+    for t in ["cyberpunk", "last-of-us", "rdr2", "returnal", "dead-space", "doom"]:
+        (themes_dir / f"{t}.css").write_text(":root {}")
+    (tmp_path / ".notes-config.json").write_text('{"theme": "cyberpunk"}')
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    for t in ["cyberpunk", "last-of-us", "rdr2", "returnal", "dead-space", "doom"]:
+        assert (output_dir / f"index-{t}.html").exists(), f"missing index-{t}.html"
+
+
+def test_build_index_html_is_redirect_to_default_theme(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir = tmp_path / "notes"
+    themes_dir = tmp_path / "themes"
+    output_dir = tmp_path / "output"
+    themes_dir.mkdir(parents=True)
+    for t in ["cyberpunk", "last-of-us", "rdr2", "returnal", "dead-space", "doom"]:
+        (themes_dir / f"{t}.css").write_text(":root {}")
+    (tmp_path / ".notes-config.json").write_text('{"theme": "last-of-us"}')
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    redirect = (output_dir / "index.html").read_text()
+    assert "location.replace" in redirect
+    # default fallback embeds the config active theme
+    assert "last-of-us" in redirect
+
+
+def test_index_pages_have_navigation_switchtheme(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir = tmp_path / "notes"
+    themes_dir = tmp_path / "themes"
+    output_dir = tmp_path / "output"
+    themes_dir.mkdir(parents=True)
+    for t in ["cyberpunk", "last-of-us", "rdr2", "returnal", "dead-space", "doom"]:
+        (themes_dir / f"{t}.css").write_text(":root {}")
+    (tmp_path / ".notes-config.json").write_text('{"theme": "cyberpunk"}')
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    for t in ["cyberpunk", "last-of-us", "rdr2", "returnal", "dead-space", "doom"]:
+        html = (output_dir / f"index-{t}.html").read_text()
+        assert "window.location.href" in html, f"index-{t}.html missing navigation in switchTheme"

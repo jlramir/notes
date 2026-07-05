@@ -39,10 +39,11 @@ def build(
     _write_notes_json(notes, output_dir)
     for note in notes:
         _write_note_page(note, output_dir, active_theme)
-    if active_theme == "cyberpunk":
-        _write_index_cyberpunk(notes, output_dir, active_theme)
-    else:
-        _write_index(notes, output_dir, active_theme)
+    _write_index_cyberpunk(notes, output_dir, "cyberpunk")
+    for t in _VALID_THEMES:
+        if t != "cyberpunk":
+            _write_index(notes, output_dir, t)
+    _write_index_redirect(output_dir, active_theme)
 
 
 def _collect_notes(notes_dir: Path) -> list[dict]:
@@ -233,15 +234,36 @@ def _write_index(notes: list[dict], output_dir: Path, theme: str) -> None:
       `).join("");
     }}
 
-    {_theme_switcher_js_inline()}
-
-    const saved = localStorage.getItem("notes-theme");
-    if (saved) switchTheme(saved, false);
+    function switchTheme(name, save) {{
+      if (save === undefined) save = true;
+      if (save) localStorage.setItem("notes-theme", name);
+      if (name !== "{theme}") {{
+        window.location.href = "index-" + name + ".html";
+      }}
+    }}
+    var saved = localStorage.getItem("notes-theme");
+    if (saved && saved !== "{theme}") {{
+      window.location.href = "index-" + saved + ".html";
+    }}
     render();
   </script>
 </body>
 </html>"""
-    (output_dir / "index.html").write_text(index_html, encoding="utf-8")
+    (output_dir / f"index-{theme}.html").write_text(index_html, encoding="utf-8")
+
+
+def _write_index_redirect(output_dir: Path, default_theme: str) -> None:
+    redirect_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"></head>
+<body>
+<script>
+  var t = localStorage.getItem('notes-theme') || '{default_theme}';
+  location.replace('index-' + t + '.html');
+</script>
+</body>
+</html>"""
+    (output_dir / "index.html").write_text(redirect_html, encoding="utf-8")
 
 
 def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> None:
@@ -930,19 +952,22 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 
     function switchTheme(name, save) {{
       if (save === undefined) save = true;
-      document.getElementById('theme-css').href = 'themes/' + name + '.css';
-      document.getElementById('theme-switcher').value = name;
       if (save) localStorage.setItem('notes-theme', name);
+      if (name !== 'cyberpunk') {{
+        window.location.href = 'index-' + name + '.html';
+      }}
     }}
 
     var savedTheme = localStorage.getItem('notes-theme');
-    if (savedTheme) switchTheme(savedTheme, false);
+    if (savedTheme && savedTheme !== 'cyberpunk') {{
+      window.location.href = 'index-' + savedTheme + '.html';
+    }}
     renderSidebar();
     if (NOTES.length > 0) selectNote(NOTES[0].slug);
   </script>
 </body>
 </html>"""
-    (output_dir / "index.html").write_text(index_html, encoding="utf-8")
+    (output_dir / "index-cyberpunk.html").write_text(index_html, encoding="utf-8")
 
 
 def _theme_switcher_js(depth: int) -> str:

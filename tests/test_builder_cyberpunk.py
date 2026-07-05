@@ -35,7 +35,7 @@ def test_cyberpunk_index_has_two_panel_layout(tmp_path, monkeypatch):
     notes_dir, themes_dir, output_dir = _setup(tmp_path)
     _make_note(notes_dir, "Test Note", "work", [])
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     assert "cp-sidebar" in html
     assert "cp-content" in html
     assert "cp-topbar" in html
@@ -45,7 +45,7 @@ def test_cyberpunk_index_shows_journal_tab_active(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     notes_dir, themes_dir, output_dir = _setup(tmp_path)
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     assert "cp-tab active" in html
     assert "JOURNAL" in html
 
@@ -55,7 +55,7 @@ def test_cyberpunk_index_embeds_html_field(tmp_path, monkeypatch):
     notes_dir, themes_dir, output_dir = _setup(tmp_path)
     _make_note(notes_dir, "Rich Note", "work", [], content="## Section\n\nHello")
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     assert '"html"' in html
     assert "<h2>" in html
 
@@ -66,7 +66,7 @@ def test_cyberpunk_index_groups_by_folder(tmp_path, monkeypatch):
     _make_note(notes_dir, "Work Note", "work", [])
     _make_note(notes_dir, "Ideas Note", "ideas", [])
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     assert '"work"' in html
     assert '"ideas"' in html
 
@@ -79,7 +79,7 @@ def test_cyberpunk_index_escapes_script_injection(tmp_path, monkeypatch):
         content="</script><script>alert(1)</script>",
     )
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     assert "</script><script>alert(1)" not in html
 
 
@@ -89,7 +89,7 @@ def test_non_cyberpunk_theme_uses_default_layout(tmp_path, monkeypatch):
     (themes_dir / "doom.css").write_text(":root {}")
     _make_note(notes_dir, "Doom Note", "work", [])
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-doom.html").read_text()
     assert "cp-sidebar" not in html
     assert "note-card" in html
 
@@ -109,7 +109,7 @@ def test_cyberpunk_body_has_vignette_and_noise(tmp_path, monkeypatch):
     notes_dir, themes_dir, output_dir = _setup(tmp_path)
     _make_note(notes_dir, "Bg Note", "work", [])
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     # vignette: a radial gradient darkening the corners
     assert "radial-gradient(" in html
     # texture: inline SVG noise layer (no binary asset)
@@ -120,7 +120,7 @@ def test_cyberpunk_has_top_gradient_strip(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     notes_dir, themes_dir, output_dir = _setup(tmp_path)
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     assert ".cp-topbar::before" in html
     # magenta stop present in the strip gradient
     assert "#e0006a" in html
@@ -130,7 +130,7 @@ def test_cyberpunk_scrollbar_glows_red(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     notes_dir, themes_dir, output_dir = _setup(tmp_path)
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
-    html = (output_dir / "index.html").read_text()
+    html = (output_dir / "index-cyberpunk.html").read_text()
     # find the scrollbar-thumb block and confirm it glows
     idx = html.find("::-webkit-scrollbar-thumb")
     assert idx != -1
