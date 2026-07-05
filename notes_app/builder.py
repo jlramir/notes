@@ -379,15 +379,22 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       letter-spacing: 0.18em;
       text-transform: uppercase;
       cursor: default;
-      border-right: 1px solid #1a0505;
       position: relative;
     }}
-    .cp-tab:first-child {{ border-left: 1px solid #1a0505; }}
     .cp-tab.active {{
       color: #00d0c8;
       text-shadow: 0 0 8px rgba(0,208,200,0.5), 0 0 20px rgba(0,208,200,0.2);
     }}
-    .cp-tab.active::after {{ content: none; }}
+    .cp-tab.active::after {{
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -2px;
+      height: 2px;
+      background: #00d0c8;
+      box-shadow: 0 0 8px rgba(0,208,200,0.5), 0 0 20px rgba(0,208,200,0.2);
+    }}
     .cp-tab-icon {{ font-size: 0.7rem; color: inherit; opacity: 0.8; }}
 
     /* right side search + theme */
