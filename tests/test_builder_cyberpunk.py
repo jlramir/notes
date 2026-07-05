@@ -102,3 +102,38 @@ def test_notes_json_excludes_html_field(tmp_path, monkeypatch):
     data = json.loads((output_dir / "notes.json").read_text())
     assert len(data) == 1
     assert "html" not in data[0]
+
+
+def test_cyberpunk_body_has_vignette_and_noise(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    _make_note(notes_dir, "Bg Note", "work", [])
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index.html").read_text()
+    # vignette: a radial gradient darkening the corners
+    assert "radial-gradient(" in html
+    # texture: inline SVG noise layer (no binary asset)
+    assert "data:image/svg+xml" in html
+
+
+def test_cyberpunk_has_top_gradient_strip(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index.html").read_text()
+    assert ".cp-topbar::before" in html
+    # magenta stop present in the strip gradient
+    assert "#e0006a" in html
+
+
+def test_cyberpunk_scrollbar_glows_red(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    html = (output_dir / "index.html").read_text()
+    # find the scrollbar-thumb block and confirm it glows
+    idx = html.find("::-webkit-scrollbar-thumb")
+    assert idx != -1
+    thumb_region = html[idx:idx + 200]
+    assert "box-shadow" in thumb_region
+    assert "#cc2020" in thumb_region
