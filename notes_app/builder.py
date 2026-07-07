@@ -818,7 +818,8 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }}
 
     function selectNote(id) {{
@@ -909,7 +910,7 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         var folderNotes = byFolder[folder] || [];
         if (!folderNotes.length) return;
         var isCollapsed = !q && collapsed[folder];
-        html += '<div class="cp-section-header" onclick="toggleSection(\\'' + folder + '\\')">' +
+        html += '<div class="cp-section-header" onclick="toggleSection(\\'' + htmlEscape(folder) + '\\')">' +
           '<span class="cp-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
           '<span class="cp-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">&#9660;</span>' +
           '</div>';
@@ -1388,7 +1389,8 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }}
 
     function selectNote(id) {{
