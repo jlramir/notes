@@ -1010,12 +1010,9 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
   <style>
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
 
-    /* ── Base ────────────────────────────────────────── */
     body {{
-      background:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
-        linear-gradient(180deg, #1e1408 0%, #16100a 60%, #120e08 100%);
-      color: #e8d5a0;
+      background: #0a0a08;
+      color: #ccc8bc;
       font-family: 'Lora', Georgia, serif;
       height: 100vh;
       overflow: hidden;
@@ -1026,28 +1023,19 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
 
     /* ── Topbar ──────────────────────────────────────── */
     .rdr-topbar {{
-      background: linear-gradient(180deg, #2a1e0e 0%, #1e1408 100%);
-      border-bottom: 2px solid #6a4820;
+      background: #121210;
+      border-bottom: 1px solid #252520;
       display: flex;
       align-items: stretch;
-      height: 80px;
+      height: 64px;
       flex-shrink: 0;
-      position: relative;
     }}
-    .rdr-topbar::before {{
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, #8a6030 20%, #d4882a 50%, #8a6030 80%, transparent 100%);
-    }}
-
     .rdr-stats {{
       display: flex;
       align-items: center;
-      padding: 0 28px;
-      gap: 28px;
-      border-right: 1px solid #3a2810;
+      padding: 0 24px;
+      gap: 24px;
+      border-right: 1px solid #222220;
       flex-shrink: 0;
     }}
     .rdr-stat {{
@@ -1057,64 +1045,61 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
       gap: 2px;
     }}
     .rdr-stat-val {{
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 1.9rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
       font-weight: 700;
       color: #d4882a;
       line-height: 1;
     }}
     .rdr-stat-label {{
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: #7a6040;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: #5a5850;
       text-transform: uppercase;
-      font-family: 'Lora', serif;
     }}
-
     .rdr-title-area {{
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
+      gap: 12px;
     }}
-    .rdr-title-ornament {{ color: #8a6030; font-size: 0.85rem; }}
+    .rdr-title-ornament {{ color: #4a4a44; font-size: 0.7rem; }}
     .rdr-title-text {{
       font-family: 'Playfair Display', serif;
-      font-size: 0.95rem;
-      letter-spacing: 0.4em;
+      font-size: 0.85rem;
+      letter-spacing: 0.45em;
       text-transform: uppercase;
       color: #d4882a;
     }}
-
     .rdr-topbar-right {{
       display: flex;
       align-items: center;
-      gap: 14px;
-      padding: 0 24px;
-      border-left: 1px solid #3a2810;
+      gap: 12px;
+      padding: 0 20px;
+      border-left: 1px solid #222220;
       flex-shrink: 0;
     }}
     .rdr-search {{
       background: transparent;
       border: none;
-      border-bottom: 1px solid #5a4020;
-      color: #e8d5a0;
-      font-family: 'Lora', serif;
-      font-size: 0.85rem;
-      font-style: italic;
-      padding: 2px 6px;
-      width: 160px;
-      outline: none;
-    }}
-    .rdr-search::placeholder {{ color: #5a4020; font-style: italic; }}
-    .rdr-search:focus {{ border-bottom-color: #9a6830; }}
-    .rdr-theme-select {{
-      background: #1a1208;
-      border: 1px solid #5a4020;
-      color: #d4882a;
+      border-bottom: 1px solid #2a2a24;
+      color: #ccc8bc;
       font-family: 'Lora', serif;
       font-size: 0.82rem;
+      font-style: italic;
+      padding: 2px 4px;
+      width: 150px;
+      outline: none;
+    }}
+    .rdr-search::placeholder {{ color: #3a3a34; font-style: italic; }}
+    .rdr-search:focus {{ border-bottom-color: #5a5850; }}
+    .rdr-theme-select {{
+      background: #0a0a08;
+      border: 1px solid #2a2a24;
+      color: #8a8880;
+      font-family: 'Lora', serif;
+      font-size: 0.78rem;
       padding: 3px 6px;
       cursor: pointer;
     }}
@@ -1122,222 +1107,214 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
     /* ── Layout ──────────────────────────────────────── */
     .rdr-layout {{ display: flex; flex: 1; overflow: hidden; }}
 
-    /* ── Sidebar — dark leather ──────────────────────── */
+    /* ── Sidebar — dark charcoal index panel ─────────── */
     .rdr-sidebar {{
       flex: 0 0 33.333%;
       width: 33.333%;
       overflow-y: auto;
-      padding: 40px 24px 32px;
-      background:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
-        linear-gradient(180deg, #1e1408 0%, #180e06 100%);
-      border-right: 2px solid #4a3010;
+      background: #161614;
+      border-right: 1px solid #252520;
+      display: flex;
+      flex-direction: column;
       scrollbar-width: thin;
-      scrollbar-color: #6a4820 #1a1208;
+      scrollbar-color: #3a3a34 #161614;
     }}
     .rdr-sidebar::-webkit-scrollbar {{ width: 4px; }}
-    .rdr-sidebar::-webkit-scrollbar-track {{ background: #1a1208; }}
-    .rdr-sidebar::-webkit-scrollbar-thumb {{ background: #6a4820; }}
+    .rdr-sidebar::-webkit-scrollbar-track {{ background: #161614; }}
+    .rdr-sidebar::-webkit-scrollbar-thumb {{ background: #3a3a34; border-radius: 2px; }}
 
-    /* section headers — chapter dividers */
+    .rdr-index-header {{
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid #252520;
+      flex-shrink: 0;
+    }}
+    .rdr-index-title {{
+      display: inline-block;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #f0f0e8;
+      border: 1px solid #6a6860;
+      outline: 1px solid #6a6860;
+      outline-offset: 4px;
+      padding: 5px 18px;
+    }}
+
     .rdr-section-header {{
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0 8px;
-      border-bottom: 1px solid #3a2410;
-      margin: 20px 0 4px;
+      padding: 9px 16px;
+      background: #1a1a18;
+      border-bottom: 1px solid #252520;
       cursor: pointer;
       user-select: none;
     }}
-    .rdr-section-header:first-child {{ margin-top: 0; }}
-    .rdr-section-divider {{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 1;
-    }}
     .rdr-section-title {{
-      font-family: 'Playfair Display', serif;
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.3em;
-      color: #d4882a;
+      font-family: 'Lora', serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: #7a7870;
       text-transform: uppercase;
-      flex-shrink: 0;
-    }}
-    .rdr-section-line {{
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, #4a3010, transparent);
     }}
     .rdr-section-arrow {{
-      color: #6a4820;
-      font-size: 0.55rem;
+      color: #4a4a44;
+      font-size: 0.5rem;
       transition: transform 0.15s;
-      margin-left: 8px;
-      flex-shrink: 0;
     }}
     .rdr-section-arrow.collapsed {{ transform: rotate(-90deg); }}
 
-    /* note items — ledger rows with dot leaders */
     .rdr-note-item {{
       display: flex;
-      align-items: baseline;
-      padding: 7px 0 7px 6px;
+      align-items: center;
+      padding: 9px 16px 9px 14px;
       cursor: pointer;
-      border-bottom: 1px solid rgba(74,48,16,0.4);
-      gap: 4px;
+      border-bottom: 1px solid #1e1e1c;
+      gap: 8px;
     }}
-    .rdr-note-item:hover {{ background: rgba(212,136,42,0.07); }}
+    .rdr-note-item:hover {{ background: #1c1c1a; }}
     .rdr-note-item.active {{
-      background: rgba(212,136,42,0.12);
+      background: #202020;
       border-left: 2px solid #d4882a;
-      padding-left: 4px;
+      padding-left: 12px;
     }}
-    .rdr-note-info {{ flex-shrink: 1; min-width: 0; overflow: hidden; }}
+    .rdr-note-glyph {{
+      color: #4a4a44;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }}
+    .rdr-note-item.active .rdr-note-glyph {{ color: #d4882a; }}
     .rdr-note-title {{
       font-family: 'Lora', serif;
       font-size: 0.88rem;
-      color: #e8d5a0;
+      color: #b0aca4;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      line-height: 1.3;
-    }}
-    .rdr-note-item.active .rdr-note-title {{ color: #f0c060; font-style: italic; }}
-    .rdr-note-dots {{
       flex: 1;
-      border-bottom: 1px dotted #3a2810;
-      margin: 0 4px 3px;
-      min-width: 10px;
-      align-self: flex-end;
     }}
-    .rdr-note-subtitle {{
+    .rdr-note-item.active .rdr-note-title {{ color: #f0f0e8; }}
+    .rdr-note-item-date {{
       font-family: 'Lora', serif;
-      font-size: 0.68rem;
-      color: #7a5830;
-      font-style: italic;
-      white-space: nowrap;
+      font-size: 0.65rem;
+      color: #4a4a44;
       flex-shrink: 0;
+      white-space: nowrap;
     }}
 
-    /* ── Content panel — parchment pages ────────────── */
+    /* ── Content panel — near-black stats screen ─────── */
     .rdr-content {{
       flex: 1;
       overflow-y: auto;
-      padding: 64px 96px 48px;
-      background:
-        repeating-linear-gradient(
-          0deg,
-          transparent 0px,
-          transparent 27px,
-          rgba(140,100,50,0.12) 27px,
-          rgba(140,100,50,0.12) 28px
-        ),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
-        linear-gradient(180deg, #f2e8d0 0%, #ecdfc4 60%, #e8d8bc 100%);
-      color: #2a1804;
+      padding: 56px 72px 48px;
+      background: #0e0e0c;
       scrollbar-width: thin;
-      scrollbar-color: #8a6030 #e8d8bc;
+      scrollbar-color: #2a2a24 #0e0e0c;
     }}
-    .rdr-content::-webkit-scrollbar {{ width: 6px; }}
-    .rdr-content::-webkit-scrollbar-track {{ background: #e8d8bc; }}
-    .rdr-content::-webkit-scrollbar-thumb {{ background: #8a6030; }}
+    .rdr-content::-webkit-scrollbar {{ width: 5px; }}
+    .rdr-content::-webkit-scrollbar-track {{ background: #0e0e0c; }}
+    .rdr-content::-webkit-scrollbar-thumb {{ background: #2a2a24; border-radius: 2px; }}
 
     .rdr-content-empty {{
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: #c0a87a;
+      color: #3a3a34;
       font-family: 'Playfair Display', serif;
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       letter-spacing: 0.3em;
       text-transform: uppercase;
       font-style: italic;
     }}
 
-    /* note header */
-    .rdr-note-header {{
-      margin-bottom: 28px;
-    }}
+    .rdr-note-header {{ margin-bottom: 32px; }}
     .rdr-note-heading {{
       font-family: 'Playfair Display', serif;
-      font-size: 1.9rem;
+      font-size: 2rem;
       font-weight: 700;
-      color: #1a0e06;
-      line-height: 1.2;
-      margin-bottom: 12px;
+      color: #f0f0e8;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      margin-bottom: 14px;
     }}
-    .rdr-note-divider {{
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 12px 0;
-      color: #a08040;
-      font-size: 0.75rem;
-    }}
-    .rdr-note-divider::before, .rdr-note-divider::after {{
-      content: '';
-      flex: 1;
+    .rdr-note-rule {{
       height: 1px;
-      background: linear-gradient(90deg, transparent, #a08040 50%, transparent);
+      background: #252520;
+      margin-bottom: 12px;
     }}
     .rdr-note-meta {{
       display: flex;
-      gap: 12px;
       align-items: center;
+      gap: 12px;
       flex-wrap: wrap;
-      margin-top: 8px;
     }}
-    .rdr-note-date {{
+    .rdr-note-meta-date {{
       font-family: 'Lora', serif;
       font-size: 0.72rem;
-      color: #8a6840;
+      color: #5a5850;
       font-style: italic;
     }}
     .rdr-tag {{
       font-family: 'Lora', serif;
       font-size: 0.65rem;
-      color: #6a4820;
-      border: 1px solid #a08040;
-      padding: 1px 8px;
+      color: #6a6860;
       font-style: italic;
     }}
 
-    /* note body */
     .rdr-note-body {{
       font-family: 'Lora', Georgia, serif;
       font-size: 0.95rem;
-      line-height: 1.85;
-      color: #2a1804;
+      line-height: 1.75;
+      color: #ccc8bc;
     }}
     .rdr-note-body h1, .rdr-note-body h2, .rdr-note-body h3 {{
       font-family: 'Playfair Display', serif;
-      color: #1a0e06;
-      margin: 28px 0 10px;
+      font-variant: small-caps;
+      text-align: center;
+      letter-spacing: 0.12em;
+      color: #aaa8a0;
+      margin: 28px 0 16px;
     }}
-    .rdr-note-body h1 {{ font-size: 1.4rem; border-bottom: 1px solid #c0a060; padding-bottom: 6px; }}
-    .rdr-note-body h2 {{ font-size: 1.15rem; color: #4a2e10; }}
-    .rdr-note-body h3 {{ font-size: 0.95rem; color: #6a4020; font-style: italic; }}
+    .rdr-note-body h1 {{
+      font-size: 1.1rem;
+      border-top: 1px solid #252520;
+      border-bottom: 1px solid #252520;
+      padding: 8px 0;
+    }}
+    .rdr-note-body h2 {{
+      font-size: 0.95rem;
+      border-bottom: 1px solid #252520;
+      padding-bottom: 6px;
+    }}
+    .rdr-note-body h3 {{ font-size: 0.85rem; color: #7a7870; }}
     .rdr-note-body p {{ margin-bottom: 14px; }}
     .rdr-note-body ul, .rdr-note-body ol {{ padding-left: 1.5rem; margin-bottom: 14px; }}
     .rdr-note-body li {{ margin-bottom: 5px; }}
-    .rdr-note-body strong {{ color: #1a0e06; font-weight: 700; }}
-    .rdr-note-body em {{ color: #5a3a1a; font-style: italic; }}
-    .rdr-note-body a {{ color: #8a4a10; text-decoration: underline; }}
+    .rdr-note-body strong {{ color: #e8e4dc; }}
+    .rdr-note-body em {{ color: #9a9890; }}
+    .rdr-note-body a {{
+      color: #d4882a;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,136,42,0.3);
+    }}
+    .rdr-note-body a:hover {{ border-bottom-color: #d4882a; }}
     .rdr-note-body code {{
       font-family: 'Share Tech Mono', 'Courier New', monospace;
-      color: #4a2e10;
       font-size: 0.85em;
-      background: rgba(90,56,24,0.1);
+      color: #c8c4b8;
+      background: #1c1c1a;
       padding: 1px 5px;
-      border: 1px solid #c0a060;
+      border: 1px solid #2a2a24;
     }}
     .rdr-note-body pre {{
-      background: rgba(140,100,50,0.08);
-      border: 1px solid #c0a060;
+      background: #1c1c18;
+      border: 1px solid #2a2a24;
       border-left: 3px solid #8a6030;
       padding: 16px 18px;
       padding-right: 72px;
@@ -1345,26 +1322,23 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
       margin-bottom: 14px;
       position: relative;
     }}
-    .rdr-note-body pre code {{ background: none; border: none; padding: 0; color: #3a2010; font-size: 0.88em; }}
+    .rdr-note-body pre code {{ background: none; border: none; padding: 0; }}
     .rdr-copy-btn {{
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 8px; right: 8px;
       background: transparent;
-      border: 1px solid #8a6030;
-      color: #8a6030;
+      border: 1px solid #3a3a34;
+      color: #5a5850;
       font-family: 'Lora', serif;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-style: italic;
-      letter-spacing: 0.06em;
-      padding: 2px 10px;
+      padding: 2px 8px;
       cursor: pointer;
-      transition: background 0.1s;
+      transition: border-color 0.1s, color 0.1s;
     }}
-    .rdr-copy-btn:hover {{ background: rgba(138,96,48,0.1); }}
+    .rdr-copy-btn:hover {{ border-color: #6a6860; color: #8a8880; }}
     .rdr-copy-btn.copied {{ color: #6a8040; border-color: #6a8040; }}
-
-    mark {{ background: rgba(212,136,42,0.35); color: #1a0e06; padding: 0 2px; }}
+    mark {{ background: rgba(212,136,42,0.3); color: #f0f0e8; padding: 0 2px; }}
   </style>
 </head>
 <body>
@@ -1392,7 +1366,12 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
     </div>
   </header>
   <div class="rdr-layout">
-    <nav class="rdr-sidebar" id="rdr-sidebar"></nav>
+    <nav class="rdr-sidebar">
+      <div class="rdr-index-header">
+        <div class="rdr-index-title">INDEX</div>
+      </div>
+      <div id="rdr-sidebar-list"></div>
+    </nav>
     <main class="rdr-content" id="rdr-content">
       <div class="rdr-content-empty">Select an entry to read</div>
     </main>
@@ -1423,9 +1402,9 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
       document.getElementById('rdr-content').innerHTML =
         '<div class="rdr-note-header">' +
           '<div class="rdr-note-heading">' + htmlEscape(note.title) + '</div>' +
-          '<div class="rdr-note-divider">✦</div>' +
+          '<div class="rdr-note-rule"></div>' +
           '<div class="rdr-note-meta">' +
-            '<span class="rdr-note-date">' + htmlEscape(note.date) + '</span>' + tags +
+            '<span class="rdr-note-meta-date">' + htmlEscape(note.date) + '</span>' + tags +
           '</div>' +
         '</div>' +
         '<div class="rdr-note-body">' + (note.html || '') + '</div>';
@@ -1501,22 +1480,18 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
         var folderNotes = byFolder[folder] || [];
         if (!folderNotes.length) return;
         var isCollapsed = !q && collapsed[folder];
-        html += '<div class="rdr-section-header" onclick="toggleSection(\\'' + folder + '\\')">' +
-          '<div class="rdr-section-divider">' +
-            '<span class="rdr-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
-            '<div class="rdr-section-line"></div>' +
-          '</div>' +
+        html += '<div class="rdr-section-header" onclick="toggleSection(\\'' + htmlEscape(folder) + '\\')">' +
+          '<span class="rdr-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
           '<span class="rdr-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">▼</span>' +
           '</div>';
         if (!isCollapsed) {{
           folderNotes.forEach(function(note) {{
-            var sub = note.date || (note.tags || []).join(', ') || '';
             var titleHtml = q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title);
             html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
               'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
-              '<div class="rdr-note-info"><div class="rdr-note-title">' + titleHtml + '</div></div>' +
-              '<div class="rdr-note-dots"></div>' +
-              '<div class="rdr-note-subtitle">' + htmlEscape(sub) + '</div>' +
+              '<span class="rdr-note-glyph">&#9658;</span>' +
+              '<div class="rdr-note-title">' + titleHtml + '</div>' +
+              '<div class="rdr-note-item-date">' + htmlEscape(note.date || '') + '</div>' +
               '</div>';
           }});
         }}
@@ -1524,21 +1499,21 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
 
       if (rootNotes.length) {{
         rootNotes.forEach(function(note) {{
-          var sub = note.date || (note.tags || []).join(', ') || '';
+          var titleHtml = q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title);
           html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
             'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
-            '<div class="rdr-note-info"><div class="rdr-note-title">' + (q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title)) + '</div></div>' +
-            '<div class="rdr-note-dots"></div>' +
-            '<div class="rdr-note-subtitle">' + htmlEscape(sub) + '</div>' +
+            '<span class="rdr-note-glyph">&#9658;</span>' +
+            '<div class="rdr-note-title">' + titleHtml + '</div>' +
+            '<div class="rdr-note-item-date">' + htmlEscape(note.date || '') + '</div>' +
             '</div>';
         }});
       }}
 
       if (!html) {{
-        html = '<div style="padding:2rem;color:#5a3818;text-align:center;font-size:0.8rem;font-style:italic;font-family:Lora,serif">No entries found.</div>';
+        html = '<div style="padding:2rem;color:#3a3a34;text-align:center;font-size:0.8rem;font-style:italic;font-family:Lora,serif">No entries found.</div>';
       }}
 
-      document.getElementById('rdr-sidebar').innerHTML = html;
+      document.getElementById('rdr-sidebar-list').innerHTML = html;
       if (activeId) {{
         var active = document.querySelector('[data-id="' + activeId + '"]');
         if (active) active.classList.add('active');
