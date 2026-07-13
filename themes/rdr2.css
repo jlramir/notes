@@ -1,17 +1,17 @@
-/* Red Dead Redemption 2 — western journal */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:ital,wght@0,400;1,400&display=swap');
+/* Red Dead Redemption 2 — dark charcoal index + stats screen */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg-primary:     #2e2416;
-  --bg-secondary:   #3a2e1a;
-  --bg-card:        #342819;
-  --text-primary:   #e8d5a0;
-  --text-secondary: #9a8060;
+  --bg-primary:     #0a0a08;
+  --bg-secondary:   #161614;
+  --bg-card:        #1c1c1a;
+  --text-primary:   #ccc8bc;
+  --text-secondary: #6a6860;
   --text-accent:    #d4882a;
-  --border-color:   #5a4020;
+  --border-color:   #2a2a24;
   --font-body:      'Lora', Georgia, serif;
   --font-heading:   'Playfair Display', Georgia, serif;
   --highlight-color:#d4882a;
-  --tag-bg:         #4a3010;
-  --tag-text:       #e8d5a0;
+  --tag-bg:         #1c1c1a;
+  --tag-text:       #6a6860;
 }

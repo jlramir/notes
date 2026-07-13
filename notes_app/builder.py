@@ -40,8 +40,9 @@ def build(
     for note in notes:
         _write_note_page(note, output_dir, active_theme)
     _write_index_cyberpunk(notes, output_dir, "cyberpunk")
+    _write_index_rdr2(notes, output_dir, "rdr2")
     for t in _VALID_THEMES:
-        if t != "cyberpunk":
+        if t not in ("cyberpunk", "rdr2"):
             _write_index(notes, output_dir, t)
     _write_index_redirect(output_dir, active_theme)
 
@@ -812,6 +813,15 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
     const collapsed = {{}};
     const folderOrder = {folder_order_js};
 
+    function htmlEscape(str) {{
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }}
+
     function selectNote(id) {{
       activeId = id;
       document.querySelectorAll('.cp-note-item').forEach(function(el) {{ el.classList.remove('active'); }});
@@ -819,12 +829,12 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
       if (item) item.classList.add('active');
       var note = NOTES.find(function(n) {{ return n.slug === id; }});
       if (!note) return;
-      var tags = (note.tags || []).map(function(t) {{ return '<span class="cp-tag">' + t + '</span>'; }}).join('');
+      var tags = (note.tags || []).map(function(t) {{ return '<span class="cp-tag">' + htmlEscape(t) + '</span>'; }}).join('');
       document.getElementById('cp-content').innerHTML =
         '<div class="cp-note-header">' +
-          '<div class="cp-note-heading">' + note.title + '</div>' +
+          '<div class="cp-note-heading">' + htmlEscape(note.title) + '</div>' +
           '<div class="cp-note-meta">' +
-            '<span class="cp-note-date">' + note.date + '</span>' + tags +
+            '<span class="cp-note-date">' + htmlEscape(note.date) + '</span>' + tags +
           '</div>' +
         '</div>' +
         '<div class="cp-note-body">' + (note.html || '') + '</div>';
@@ -900,23 +910,23 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         var folderNotes = byFolder[folder] || [];
         if (!folderNotes.length) return;
         var isCollapsed = !q && collapsed[folder];
-        html += '<div class="cp-section-header" onclick="toggleSection(\\'' + folder + '\\')">' +
-          '<span class="cp-section-title">' + folder.toUpperCase() + '</span>' +
+        html += '<div class="cp-section-header" onclick="toggleSection(\\'' + htmlEscape(folder) + '\\')">' +
+          '<span class="cp-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
           '<span class="cp-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">&#9660;</span>' +
           '</div>';
         if (!isCollapsed) {{
           folderNotes.forEach(function(note) {{
             var sub = (note.tags || []).join(' \xb7 ') || note.date || '';
-            var titleHtml = q ? highlight(note.title.toUpperCase(), q.toUpperCase()) : note.title.toUpperCase();
+            var titleHtml = q ? highlight(htmlEscape(note.title.toUpperCase()), q.toUpperCase()) : htmlEscape(note.title.toUpperCase());
             html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-              'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
+              'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
               '<div class="cp-note-icon">' +
-                '<span class="cp-note-icon-label">' + (note.folder || 'ROOT').toUpperCase() + '</span>' +
-                '<span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span>' +
+                '<span class="cp-note-icon-label">' + htmlEscape((note.folder || 'ROOT').toUpperCase()) + '</span>' +
+                '<span class="cp-note-icon-text">' + htmlEscape(note.title.trim().substring(0, 2).toUpperCase()) + '</span>' +
               '</div>' +
               '<div class="cp-note-info">' +
                 '<div class="cp-note-title">' + titleHtml + '</div>' +
-                '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
+                '<div class="cp-note-subtitle">' + htmlEscape(sub.toUpperCase()) + '</div>' +
               '</div></div>';
           }});
         }}
@@ -926,14 +936,14 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
         rootNotes.forEach(function(note) {{
           var sub = (note.tags || []).join(' \xb7 ') || note.date || '';
           html += '<div class="cp-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-            'data-id="' + note.slug + '" onclick="selectNote(\\'' + note.slug + '\\')">' +
+            'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
             '<div class="cp-note-icon">' +
               '<span class="cp-note-icon-label">ROOT</span>' +
-              '<span class="cp-note-icon-text">' + note.title.trim().substring(0, 2).toUpperCase() + '</span>' +
+              '<span class="cp-note-icon-text">' + htmlEscape(note.title.trim().substring(0, 2).toUpperCase()) + '</span>' +
             '</div>' +
             '<div class="cp-note-info">' +
-              '<div class="cp-note-title">' + note.title.toUpperCase() + '</div>' +
-              '<div class="cp-note-subtitle">' + sub.toUpperCase() + '</div>' +
+              '<div class="cp-note-title">' + (q ? highlight(htmlEscape(note.title.toUpperCase()), q.toUpperCase()) : htmlEscape(note.title.toUpperCase())) + '</div>' +
+              '<div class="cp-note-subtitle">' + htmlEscape(sub.toUpperCase()) + '</div>' +
             '</div></div>';
         }});
       }}
@@ -968,6 +978,568 @@ def _write_index_cyberpunk(notes: list[dict], output_dir: Path, theme: str) -> N
 </body>
 </html>"""
     (output_dir / "index-cyberpunk.html").write_text(index_html, encoding="utf-8")
+
+
+def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
+    notes_json = json.dumps([
+        {k: v for k, v in n.items() if k != "path"}
+        for n in notes
+    ]).replace("</", "<\\/")
+
+    folder_order: list[str] = []
+    for n in notes:
+        if n["folder"] and n["folder"] not in folder_order:
+            folder_order.append(n["folder"])
+    folder_order_js = json.dumps(folder_order)
+
+    note_count = len(notes)
+    folder_count = len(folder_order)
+
+    theme_options = "".join(
+        f'<option value="{t}"{" selected" if t == theme else ""}>{_THEME_LABELS[t]}</option>'
+        for t in _VALID_THEMES
+    )
+
+    index_html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes — Journal</title>
+  <link id="theme-css" rel="stylesheet" href="themes/{theme}.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap">
+  <style>
+    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+    body {{
+      background: #0a0a08;
+      color: #ccc8bc;
+      font-family: 'Lora', Georgia, serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      font-size: 16px;
+    }}
+
+    /* ── Topbar ──────────────────────────────────────── */
+    .rdr-topbar {{
+      background: #121210;
+      border-bottom: 1px solid #252520;
+      display: flex;
+      align-items: stretch;
+      height: 64px;
+      flex-shrink: 0;
+    }}
+    .rdr-stats {{
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 24px;
+      border-right: 1px solid #222220;
+      flex-shrink: 0;
+    }}
+    .rdr-stat {{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }}
+    .rdr-stat-val {{
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #d4882a;
+      line-height: 1;
+    }}
+    .rdr-stat-label {{
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      color: #5a5850;
+      text-transform: uppercase;
+    }}
+    .rdr-title-area {{
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }}
+    .rdr-title-ornament {{ color: #4a4a44; font-size: 0.7rem; }}
+    .rdr-title-text {{
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #d4882a;
+    }}
+    .rdr-topbar-right {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+      border-left: 1px solid #222220;
+      flex-shrink: 0;
+    }}
+    .rdr-search {{
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #2a2a24;
+      color: #ccc8bc;
+      font-family: 'Lora', serif;
+      font-size: 0.82rem;
+      font-style: italic;
+      padding: 2px 4px;
+      width: 150px;
+      outline: none;
+    }}
+    .rdr-search::placeholder {{ color: #3a3a34; font-style: italic; }}
+    .rdr-search:focus {{ border-bottom-color: #5a5850; }}
+    .rdr-theme-select {{
+      background: #0a0a08;
+      border: 1px solid #2a2a24;
+      color: #8a8880;
+      font-family: 'Lora', serif;
+      font-size: 0.78rem;
+      padding: 3px 6px;
+      cursor: pointer;
+    }}
+
+    /* ── Layout ──────────────────────────────────────── */
+    .rdr-layout {{ display: flex; flex: 1; overflow: hidden; }}
+
+    /* ── Sidebar — dark charcoal index panel ─────────── */
+    .rdr-sidebar {{
+      flex: 0 0 33.333%;
+      width: 33.333%;
+      overflow-y: auto;
+      background: #161614;
+      border-right: 1px solid #252520;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: #3a3a34 #161614;
+    }}
+    .rdr-sidebar::-webkit-scrollbar {{ width: 4px; }}
+    .rdr-sidebar::-webkit-scrollbar-track {{ background: #161614; }}
+    .rdr-sidebar::-webkit-scrollbar-thumb {{ background: #3a3a34; border-radius: 2px; }}
+
+    .rdr-index-header {{
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid #252520;
+      flex-shrink: 0;
+    }}
+    .rdr-index-title {{
+      display: inline-block;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #f0f0e8;
+      border: 1px solid #6a6860;
+      outline: 1px solid #6a6860;
+      outline-offset: 4px;
+      padding: 5px 18px;
+    }}
+
+    .rdr-section-header {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 16px;
+      background: #1a1a18;
+      border-bottom: 1px solid #252520;
+      cursor: pointer;
+      user-select: none;
+    }}
+    .rdr-section-title {{
+      font-family: 'Lora', serif;
+      font-size: 0.62rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      color: #7a7870;
+      text-transform: uppercase;
+    }}
+    .rdr-section-arrow {{
+      color: #4a4a44;
+      font-size: 0.5rem;
+      transition: transform 0.15s;
+    }}
+    .rdr-section-arrow.collapsed {{ transform: rotate(-90deg); }}
+
+    .rdr-note-item {{
+      display: flex;
+      align-items: center;
+      padding: 9px 16px 9px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #1e1e1c;
+      gap: 8px;
+    }}
+    .rdr-note-item:hover {{ background: #1c1c1a; }}
+    .rdr-note-item.active {{
+      background: #202020;
+      border-left: 2px solid #d4882a;
+      padding-left: 12px;
+    }}
+    .rdr-note-glyph {{
+      color: #4a4a44;
+      font-size: 0.6rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }}
+    .rdr-note-item.active .rdr-note-glyph {{ color: #d4882a; }}
+    .rdr-note-title {{
+      font-family: 'Lora', serif;
+      font-size: 0.88rem;
+      color: #b0aca4;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }}
+    .rdr-note-item.active .rdr-note-title {{ color: #f0f0e8; }}
+    .rdr-note-item-date {{
+      font-family: 'Lora', serif;
+      font-size: 0.65rem;
+      color: #4a4a44;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }}
+
+    /* ── Content panel — near-black stats screen ─────── */
+    .rdr-content {{
+      flex: 1;
+      overflow-y: auto;
+      padding: 56px 72px 48px;
+      background: #0e0e0c;
+      scrollbar-width: thin;
+      scrollbar-color: #2a2a24 #0e0e0c;
+    }}
+    .rdr-content::-webkit-scrollbar {{ width: 5px; }}
+    .rdr-content::-webkit-scrollbar-track {{ background: #0e0e0c; }}
+    .rdr-content::-webkit-scrollbar-thumb {{ background: #2a2a24; border-radius: 2px; }}
+
+    .rdr-content-empty {{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #3a3a34;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-style: italic;
+    }}
+
+    .rdr-note-header {{ margin-bottom: 32px; }}
+    .rdr-note-heading {{
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f0f0e8;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }}
+    .rdr-note-rule {{
+      height: 1px;
+      background: #252520;
+      margin-bottom: 12px;
+    }}
+    .rdr-note-meta {{
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }}
+    .rdr-note-meta-date {{
+      font-family: 'Lora', serif;
+      font-size: 0.72rem;
+      color: #5a5850;
+      font-style: italic;
+    }}
+    .rdr-tag {{
+      font-family: 'Lora', serif;
+      font-size: 0.65rem;
+      color: #6a6860;
+      font-style: italic;
+    }}
+
+    .rdr-note-body {{
+      font-family: 'Lora', Georgia, serif;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #ccc8bc;
+    }}
+    .rdr-note-body h1, .rdr-note-body h2, .rdr-note-body h3 {{
+      font-family: 'Playfair Display', serif;
+      font-variant: small-caps;
+      text-align: center;
+      letter-spacing: 0.12em;
+      color: #aaa8a0;
+      margin: 28px 0 16px;
+    }}
+    .rdr-note-body h1 {{
+      font-size: 1.1rem;
+      border-top: 1px solid #252520;
+      border-bottom: 1px solid #252520;
+      padding: 8px 0;
+    }}
+    .rdr-note-body h2 {{
+      font-size: 0.95rem;
+      border-bottom: 1px solid #252520;
+      padding-bottom: 6px;
+    }}
+    .rdr-note-body h3 {{ font-size: 0.85rem; color: #7a7870; }}
+    .rdr-note-body p {{ margin-bottom: 14px; }}
+    .rdr-note-body ul, .rdr-note-body ol {{ padding-left: 1.5rem; margin-bottom: 14px; }}
+    .rdr-note-body li {{ margin-bottom: 5px; }}
+    .rdr-note-body strong {{ color: #e8e4dc; }}
+    .rdr-note-body em {{ color: #9a9890; }}
+    .rdr-note-body a {{
+      color: #d4882a;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,136,42,0.3);
+    }}
+    .rdr-note-body a:hover {{ border-bottom-color: #d4882a; }}
+    .rdr-note-body code {{
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 0.85em;
+      color: #c8c4b8;
+      background: #1c1c1a;
+      padding: 1px 5px;
+      border: 1px solid #2a2a24;
+    }}
+    .rdr-note-body pre {{
+      background: #1c1c18;
+      border: 1px solid #2a2a24;
+      border-left: 3px solid #8a6030;
+      padding: 16px 18px;
+      padding-right: 72px;
+      overflow-x: auto;
+      margin-bottom: 14px;
+      position: relative;
+    }}
+    .rdr-note-body pre code {{ background: none; border: none; padding: 0; }}
+    .rdr-copy-btn {{
+      position: absolute;
+      top: 8px; right: 8px;
+      background: transparent;
+      border: 1px solid #3a3a34;
+      color: #5a5850;
+      font-family: 'Lora', serif;
+      font-size: 0.62rem;
+      font-style: italic;
+      padding: 2px 8px;
+      cursor: pointer;
+      transition: border-color 0.1s, color 0.1s;
+    }}
+    .rdr-copy-btn:hover {{ border-color: #6a6860; color: #8a8880; }}
+    .rdr-copy-btn.copied {{ color: #6a8040; border-color: #6a8040; }}
+    mark {{ background: rgba(212,136,42,0.3); color: #f0f0e8; padding: 0 2px; }}
+  </style>
+</head>
+<body>
+  <header class="rdr-topbar">
+    <div class="rdr-stats">
+      <div class="rdr-stat">
+        <span class="rdr-stat-val">{note_count}</span>
+        <span class="rdr-stat-label">Entries</span>
+      </div>
+      <div class="rdr-stat">
+        <span class="rdr-stat-val">{folder_count}</span>
+        <span class="rdr-stat-label">Chapters</span>
+      </div>
+    </div>
+    <div class="rdr-title-area">
+      <span class="rdr-title-ornament">✦</span>
+      <span class="rdr-title-text">JOURNAL</span>
+      <span class="rdr-title-ornament">✦</span>
+    </div>
+    <div class="rdr-topbar-right">
+      <input class="rdr-search" type="text" placeholder="Search entries..." oninput="onSearch(this.value)" autocomplete="off">
+      <select class="rdr-theme-select" id="theme-switcher" onchange="switchTheme(this.value)">
+        {theme_options}
+      </select>
+    </div>
+  </header>
+  <div class="rdr-layout">
+    <nav class="rdr-sidebar">
+      <div class="rdr-index-header">
+        <div class="rdr-index-title">INDEX</div>
+      </div>
+      <div id="rdr-sidebar-list"></div>
+    </nav>
+    <main class="rdr-content" id="rdr-content">
+      <div class="rdr-content-empty">Select an entry to read</div>
+    </main>
+  </div>
+  <script>
+    const NOTES = {notes_json};
+    let activeId = null;
+    let searchQuery = '';
+    const collapsed = {{}};
+    const folderOrder = {folder_order_js};
+
+    function htmlEscape(str) {{
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }}
+
+    function selectNote(id) {{
+      activeId = id;
+      document.querySelectorAll('.rdr-note-item').forEach(function(el) {{ el.classList.remove('active'); }});
+      var item = document.querySelector('[data-id="' + id + '"]');
+      if (item) item.classList.add('active');
+      var note = NOTES.find(function(n) {{ return n.slug === id; }});
+      if (!note) return;
+      var tags = (note.tags || []).map(function(t) {{ return '<span class="rdr-tag">' + htmlEscape(t) + '</span>'; }}).join('');
+      document.getElementById('rdr-content').innerHTML =
+        '<div class="rdr-note-header">' +
+          '<div class="rdr-note-heading">' + htmlEscape(note.title) + '</div>' +
+          '<div class="rdr-note-rule"></div>' +
+          '<div class="rdr-note-meta">' +
+            '<span class="rdr-note-meta-date">' + htmlEscape(note.date) + '</span>' + tags +
+          '</div>' +
+        '</div>' +
+        '<div class="rdr-note-body">' + (note.html || '') + '</div>';
+      document.querySelectorAll('#rdr-content .rdr-note-body pre').forEach(function(pre) {{
+        var btn = document.createElement('button');
+        btn.className = 'rdr-copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', function() {{
+          var code = pre.querySelector('code');
+          var text = code ? code.innerText : pre.innerText.replace('Copy', '').trim();
+          navigator.clipboard.writeText(text).then(function() {{
+            btn.textContent = 'Copied';
+            btn.classList.add('copied');
+            setTimeout(function() {{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }}, 2000);
+          }});
+        }});
+        pre.appendChild(btn);
+      }});
+    }}
+
+    function toggleSection(folder) {{
+      collapsed[folder] = !collapsed[folder];
+      renderSidebar();
+    }}
+
+    function highlight(text, q) {{
+      if (!q) return text;
+      var esc = q.replace(/[.*+?^${{}}()|[\\]\\\\]/g, '\\\\$&');
+      return text.replace(new RegExp('(' + esc + ')', 'gi'), '<mark>$1</mark>');
+    }}
+
+    function score(note, q) {{
+      if (!q) return 1;
+      var s = 0;
+      if (note.title.toLowerCase().indexOf(q) !== -1) s += 10;
+      if ((note.tags || []).some(function(t) {{ return t.toLowerCase().indexOf(q) !== -1; }})) s += 8;
+      if ((note.folder || '').toLowerCase().indexOf(q) !== -1) s += 5;
+      if ((note.content || '').toLowerCase().indexOf(q) !== -1) s += 1;
+      return s;
+    }}
+
+    function onSearch(q) {{
+      searchQuery = q.toLowerCase().trim();
+      renderSidebar();
+    }}
+
+    function renderSidebar() {{
+      var q = searchQuery;
+      var notes = NOTES;
+      if (q) {{
+        notes = notes
+          .map(function(n) {{ return {{ n: n, s: score(n, q) }}; }})
+          .filter(function(x) {{ return x.s > 0; }})
+          .sort(function(a, b) {{ return b.s - a.s; }})
+          .map(function(x) {{ return x.n; }});
+      }}
+
+      var byFolder = {{}};
+      var rootNotes = [];
+      notes.forEach(function(note) {{
+        if (note.folder) {{
+          if (!byFolder[note.folder]) byFolder[note.folder] = [];
+          byFolder[note.folder].push(note);
+        }} else {{
+          rootNotes.push(note);
+        }}
+      }});
+
+      var folders = q ? Object.keys(byFolder) : folderOrder;
+      var html = '';
+
+      folders.forEach(function(folder) {{
+        var folderNotes = byFolder[folder] || [];
+        if (!folderNotes.length) return;
+        var isCollapsed = !q && collapsed[folder];
+        html += '<div class="rdr-section-header" onclick="toggleSection(\\'' + htmlEscape(folder) + '\\')">' +
+          '<span class="rdr-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
+          '<span class="rdr-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">▼</span>' +
+          '</div>';
+        if (!isCollapsed) {{
+          folderNotes.forEach(function(note) {{
+            var titleHtml = q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title);
+            html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
+              'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
+              '<span class="rdr-note-glyph">&#9658;</span>' +
+              '<div class="rdr-note-title">' + titleHtml + '</div>' +
+              '<div class="rdr-note-item-date">' + htmlEscape(note.date || '') + '</div>' +
+              '</div>';
+          }});
+        }}
+      }});
+
+      if (rootNotes.length) {{
+        rootNotes.forEach(function(note) {{
+          var titleHtml = q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title);
+          html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
+            'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
+            '<span class="rdr-note-glyph">&#9658;</span>' +
+            '<div class="rdr-note-title">' + titleHtml + '</div>' +
+            '<div class="rdr-note-item-date">' + htmlEscape(note.date || '') + '</div>' +
+            '</div>';
+        }});
+      }}
+
+      if (!html) {{
+        html = '<div style="padding:2rem;color:#3a3a34;text-align:center;font-size:0.8rem;font-style:italic;font-family:Lora,serif">No entries found.</div>';
+      }}
+
+      document.getElementById('rdr-sidebar-list').innerHTML = html;
+      if (activeId) {{
+        var active = document.querySelector('[data-id="' + activeId + '"]');
+        if (active) active.classList.add('active');
+      }}
+    }}
+
+    function switchTheme(name, save) {{
+      if (save === undefined) save = true;
+      if (save) localStorage.setItem('notes-theme', name);
+      if (name !== 'rdr2') {{
+        window.location.href = 'index-' + name + '.html';
+      }}
+    }}
+
+    var savedTheme = localStorage.getItem('notes-theme');
+    if (savedTheme && savedTheme !== 'rdr2') {{
+      window.location.href = 'index-' + savedTheme + '.html';
+    }}
+    renderSidebar();
+    if (NOTES.length > 0) selectNote(NOTES[0].slug);
+  </script>
+</body>
+</html>"""
+    (output_dir / "index-rdr2.html").write_text(index_html, encoding="utf-8")
 
 
 def _theme_switcher_js(depth: int) -> str:
