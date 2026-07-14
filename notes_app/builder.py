@@ -1019,7 +1019,7 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
       background-size: cover;
       background-position: center;
       background-attachment: fixed;
-      background-color: #c8bc7a;
+      background-color: #baaf82;
       color: #e8e0cc;
       font-family: 'Lora', Georgia, serif;
       height: 100vh;

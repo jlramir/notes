@@ -109,10 +109,10 @@ def test_rdr2_index_switchtheme_navigates(tmp_path, monkeypatch):
 
 
 def test_rdr2_css_has_parchment_background(tmp_path):
-    """themes/rdr2.css must define --bg-primary as parchment #c8bc7a."""
+    """themes/rdr2.css must define --bg-primary as parchment #baaf82."""
     css = (Path(__file__).parent.parent / "themes" / "rdr2.css").read_text()
     assert "--bg-primary:" in css
-    assert "#c8bc7a" in css
+    assert "#baaf82" in css
 
 
 def test_rdr2_build_copies_map_asset(tmp_path, monkeypatch):

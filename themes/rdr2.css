@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg-primary:     #c8bc7a;
+  --bg-primary:     #baaf82;
   --bg-secondary:   rgba(20, 15, 8, 0.88);
   --bg-card:        rgba(20, 15, 8, 0.92);
   --text-primary:   #e8e0cc;
