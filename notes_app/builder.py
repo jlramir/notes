@@ -1255,7 +1255,7 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      padding: 0 20px;
+      padding: 0 65px;
     }}
     .rdr-content {{
       flex: 1;
