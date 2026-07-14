@@ -91,12 +91,12 @@ def test_rdr2_index_escapes_script_injection(tmp_path, monkeypatch):
     assert "</script><script>alert(1)" not in html
 
 
-def test_rdr2_index_has_dark_content_background(tmp_path, monkeypatch):
+def test_rdr2_index_has_map_background(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     notes_dir, themes_dir, output_dir = _setup(tmp_path)
     build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
     html = (output_dir / "index-rdr2.html").read_text()
-    assert "#0e0e0c" in html
+    assert "rdr2-map.png" in html
 
 
 def test_rdr2_index_switchtheme_navigates(tmp_path, monkeypatch):
