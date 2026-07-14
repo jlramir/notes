@@ -12,6 +12,8 @@ def _setup(tmp_path, theme="rdr2"):
     output_dir = tmp_path / "output"
     themes_dir.mkdir(parents=True, exist_ok=True)
     (themes_dir / f"{theme}.css").write_text(":root {}")
+    if theme == "rdr2":
+        (themes_dir / "rdr2-map.png").write_bytes(b"")
     (tmp_path / ".notes-config.json").write_text(json.dumps({"theme": theme}))
     return notes_dir, themes_dir, output_dir
 
@@ -106,8 +108,15 @@ def test_rdr2_index_switchtheme_navigates(tmp_path, monkeypatch):
     assert "savedTheme !== 'rdr2'" in html
 
 
-def test_rdr2_css_has_dark_background(tmp_path):
-    """themes/rdr2.css must define --bg-primary as dark #0a0a08."""
+def test_rdr2_css_has_parchment_background(tmp_path):
+    """themes/rdr2.css must define --bg-primary as parchment #c8bc7a."""
     css = (Path(__file__).parent.parent / "themes" / "rdr2.css").read_text()
     assert "--bg-primary:" in css
-    assert "#0a0a08" in css
+    assert "#c8bc7a" in css
+
+
+def test_rdr2_build_copies_map_asset(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    notes_dir, themes_dir, output_dir = _setup(tmp_path)
+    build(notes_dir=notes_dir, themes_dir=themes_dir, output_dir=output_dir)
+    assert (output_dir / "rdr2-map.png").exists()

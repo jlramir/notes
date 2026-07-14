@@ -36,6 +36,9 @@ def build(
 
     notes = _collect_notes(notes_dir)
     _copy_themes(themes_dir, output_dir)
+    map_src = themes_dir / "rdr2-map.png"
+    if map_src.exists():
+        shutil.copy2(map_src, output_dir / "rdr2-map.png")
     _write_notes_json(notes, output_dir)
     for note in notes:
         _write_note_page(note, output_dir, active_theme)

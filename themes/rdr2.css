@@ -1,17 +1,17 @@
-/* Red Dead Redemption 2 — dark charcoal index + stats screen */
+/* Red Dead Redemption 2 — map overlay theme */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg-primary:     #0a0a08;
-  --bg-secondary:   #161614;
-  --bg-card:        #1c1c1a;
-  --text-primary:   #ccc8bc;
-  --text-secondary: #6a6860;
+  --bg-primary:     #c8bc7a;
+  --bg-secondary:   rgba(20, 15, 8, 0.88);
+  --bg-card:        rgba(20, 15, 8, 0.92);
+  --text-primary:   #e8e0cc;
+  --text-secondary: #a09070;
   --text-accent:    #d4882a;
-  --border-color:   #2a2a24;
+  --border-color:   rgba(180, 140, 60, 0.5);
   --font-body:      'Lora', Georgia, serif;
   --font-heading:   'Playfair Display', Georgia, serif;
   --highlight-color:#d4882a;
-  --tag-bg:         #1c1c1a;
-  --tag-text:       #6a6860;
+  --tag-bg:         rgba(20, 15, 8, 0.6);
+  --tag-text:       #a09070;
 }
