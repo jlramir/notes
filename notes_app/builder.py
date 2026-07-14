@@ -1541,7 +1541,7 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
         var folderNotes = byFolder[folder] || [];
         if (!folderNotes.length) return;
         var isCollapsed = !q && collapsed[folder];
-        html += '<div class="rdr-section-header" onclick="toggleSection(\\'' + htmlEscape(folder) + '\\')">' +
+        html += '<div class="rdr-section-header" onclick="toggleSection(' + json.dumps(folder).replace('"', '&quot;') + ')">' +
           '<span class="rdr-section-title">' + htmlEscape(folder.toUpperCase()) + '</span>' +
           '<span class="rdr-section-arrow' + (isCollapsed ? ' collapsed' : '') + '">&#9660;</span>' +
           '</div>';
@@ -1549,7 +1549,7 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
           folderNotes.forEach(function(note) {{
             var titleHtml = q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title);
             html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-              'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
+              'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(' + json.dumps(note.slug).replace('"', '&quot;') + ')">' +
               '<span class="rdr-note-glyph">&#9658;</span>' +
               '<div class="rdr-note-title">' + titleHtml + '</div>' +
               '<div class="rdr-note-item-date">' + htmlEscape(note.date || '') + '</div>' +
@@ -1562,7 +1562,7 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
         rootNotes.forEach(function(note) {{
           var titleHtml = q ? highlight(htmlEscape(note.title), q) : htmlEscape(note.title);
           html += '<div class="rdr-note-item' + (note.slug === activeId ? ' active' : '') + '" ' +
-            'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(\\'' + htmlEscape(note.slug) + '\\')">' +
+            'data-id="' + htmlEscape(note.slug) + '" onclick="selectNote(' + json.dumps(note.slug).replace('"', '&quot;') + ')">' +
             '<span class="rdr-note-glyph">&#9658;</span>' +
             '<div class="rdr-note-title">' + titleHtml + '</div>' +
             '<div class="rdr-note-item-date">' + htmlEscape(note.date || '') + '</div>' +
