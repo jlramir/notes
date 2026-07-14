@@ -1104,8 +1104,8 @@ def _write_index_rdr2(notes: list[dict], output_dir: Path, theme: str) -> None:
       display: flex;
       flex: 1;
       overflow: hidden;
-      gap: 12px;
-      padding: 12px;
+      gap: 35px;
+      padding: 35px;
     }}
 
     /* ── Corner ornaments (shared) ───────────────────── */
